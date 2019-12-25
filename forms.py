@@ -9,7 +9,9 @@ from models import *  # you forgot this and it took forever to notice the mistak
 
 
 class LoginForm(FlaskForm):
+    username = StringField('Player Name', validators=[
+                            DataRequired()])
     studentID = StringField('Student ID', validators=[
                             DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    #password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')

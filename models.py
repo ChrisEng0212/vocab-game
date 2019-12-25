@@ -13,17 +13,17 @@ def load_user(user_id):
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(25), unique=True, nullable=False)
-    password = db.Column(db.String(), nullable=False)
+    studentID = db.Column(db.String(), nullable=False)
     test = db.Column(db.String())
     #studentID = db.Column(db.String())    
 
 class Games(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     players = db.Column(db.String())
     records = db.Column(db.String())
     results = db.Column(db.String())
-    #winner = db.Column(db.String())
+    winner = db.Column(db.String())
     gameSet = db.Column(db.Integer())
 
 class MyModelView(ModelView):

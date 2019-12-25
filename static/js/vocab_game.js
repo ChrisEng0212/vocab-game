@@ -25,7 +25,8 @@ $(document).ready(function(){
             document.getElementById('qJSON').innerHTML = data.qString
         }
         if (data.player == 'p2'){
-             document.querySelector('#ready2').style="color:white;background:green"             
+             document.querySelector('#ready2').style = "color:white;background:green"  
+             document.querySelector('#ready2').innerHTML = data.opponent      
              Wait(1)
         }
         document.getElementById('zone').innerHTML = data.room 
@@ -90,7 +91,7 @@ function create_inputs(q){
         document.getElementById('stop').innerHTML = 'stop'     
         game = document.getElementById('zone').innerHTML    
         var end = document.createElement("button");        
-        end.class = "btn btn-warning";
+        end.setAttribute('class' , "btn btn-warning" );           
         end.innerHTML = 'CHECK SCORE'        
         end.setAttribute('value' , game );                
         end.setAttribute('onclick', 'checkScore(this.value)')
@@ -110,7 +111,7 @@ function create_inputs(q){
     
     
 
-    for (i = 0; i < qNum ; i++) {   
+    for (i = 0; i < 3 ; i++) {   
 
         let choice = obj[q]['a'][i]
         console.log(choice)
@@ -203,7 +204,7 @@ function send_result(choice, answer, question){
 
 function Start(n){        
         document.getElementById('head').innerHTML = 'Time'
-        timer.innerHTML = "5"
+        timer.innerHTML = "10"
         var x = setInterval(function() {            
             var timer = document.getElementById('timer')
             var count = Number(timer.innerHTML)            

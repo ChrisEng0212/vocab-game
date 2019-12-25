@@ -18,14 +18,17 @@ def load_user(id):
 socketio = SocketIO(app, manage_session=False)
 
 
-@app.route("/login/<string:stid>", methods=['GET', 'POST'])
-def login(stid):
+@app.route("/login", methods=['GET', 'POST'])
+def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     form = LoginForm()
 
     if form.validate_on_submit():
-        user = User.query.filter_by(username=stid).first()
+        new_user = User(username=form.username.data, studentID=form.studentID.data)
+        db.session.add(new_user)
+        db.session.commit()
+        user = User.query.filter_by(username=form.username.data).first()
         login_user(user)
         flash(f'Logged In', 'secondary')
         return redirect(url_for('home'))
@@ -42,9 +45,8 @@ def login(stid):
             flash(
                 f'Login Unsuccessful. Please check your password.', 'danger')
             return redirect(url_for('login', stid=current_user.username))
-    else:
-        form.studentID.data = stid
-    return render_template('login.html', title='Login', form=form, stid=stid)
+    
+    return render_template('login.html', title='Login', form=form)
 
 @app.route("/logout", methods=['GET'])
 def logout():
@@ -71,17 +73,7 @@ def fight():
         1: [current_user.username, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHYKxS5kWkgLPasL6-7by-00UWkA4qmh96e5g8m3VfxBpOzPgR&s'],
         2: ['Unknown', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVh-nPVkZ4hnJXNsFoUOWH2B7o49NLqwN8jr6hefjLDJqWHi83&s']
     }
-
-    numList = [1, 2, 3]
-    recordDict = {}
-    for key in numList:
-        recordDict[key] = {
-            't': 0,
-            'q': None,
-            'a': None,
-            'c': None
-        }
-    pprint(recordDict)    
+      
 
     return render_template('fight.html', title='Fight', users=users, username=current_user.username)
 
@@ -99,38 +91,68 @@ def fight_scores(game):
     pprint(game_results)
 
     opponent = None 
+    player = current_user.username
+
     rDict = {}
     
-    
+    scores = {
+        player: 0,
+        #opponent : 0  
+
+    }
+
     for key in game_results:
         for user in game_results[key]:
-            if user == current_user.username:
+            if user == player:
                 rDict[key] = game_results[key][user]
             else:
                 opponent = user
+                scores[user] = 0 
     
     for key in game_results:
         for user in game_results[key]:
             if user != current_user.username:
                 rDict[key] += game_results[key][user]
     
-    print (rDict)
+
+      
 
     for r in rDict:
         # if both answers are correct
-        if rDict[r][0] == 1 and rDict[r][2] == 1:            
+        if rDict[r][0] == 1 and rDict[r][2] == 1: 
+
+            scores[player] +=1 
+            scores[opponent] +=1
+
             if rDict[r][1] > rDict[r][3]:
-                rDict[r].append('faster')
+                rDict[r].append('faster + 1')
+                scores[player] += 1
+
             elif rDict[r][1] ==rDict[r][3]:
                 rDict[r].append('even')    
             else:
                 rDict[r].append('slower')
-        else:
+                scores[opponent] += 1
+        elif rDict[r][0] == 1:
+            scores[player] += 1
             rDict[r].append('-')
+        elif rDict[r][2] == 1:
+            scores[opponent] += 1
+            rDict[r].append('-')
+        
+        
 
+    print (rDict) 
+    print (scores) 
 
+    if scores[user] > scores[opponent]:
+        winner = user
+    elif scores[opponent] < scores[user]:
+        winner = opponent
+    else:
+        winner = 'EVENS'
 
-    return render_template('fightscores.html', title='Scores', rDict=rDict, user=current_user.username, opponent=opponent)
+    return render_template('fightscores.html', title='Scores', rDict=rDict, user=current_user.username, opponent=opponent, scores=scores, winner=winner)
 
 
 def add_questions ():
@@ -140,11 +162,12 @@ def add_questions ():
     # make a list of number as long as the json dictionary
     numbers = list(range(1, len(jload)+1))
 
-    QUESTIONS = 2
+    QUESTIONS = 6
     count = 1 
 
     qDict = {}
     while count < QUESTIONS +1:
+        # suffle the list before accessing it
         random.shuffle(numbers)
         no_duplicate = False
         for key in qDict:
@@ -193,7 +216,7 @@ def set_game():
         
         pDict = {
             'p1' : current_user.username, 
-            'p2' : None, 
+            'p2' : 'Waiting', 
             'sid1' : request.sid, 
             'sid2' : None
         }
@@ -235,7 +258,9 @@ def set_game():
     return {
         'player': player, 
         'game': game, 
-        'qString': qString
+        'qString': qString, 
+        'p1': pDict['p1'],
+        'p2': pDict['p2']
         }
 
 
@@ -250,45 +275,17 @@ def on_join(data):
     room = player_game['game']
     player = player_game['player']
     qString = player_game['qString']
+    p1 = player_game['p1']
+    p2 = player_game['p2']    
 
-    print('ROOM TYPE ', type(room))
-
+    if p1 == current_user.username:
+        opponent = p2
+    else:
+        opponent = p1
     
     join_room(room)      
     
-    emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
-    
-@socketio.on('questions')
-def questions(room):  
-    #room is the same as saved game      
-
-    with open('Questions.json', "r") as f:
-        jload = json.load(f)
-
-    numbers = list(range(1, len(jload)+1))
-
-    qDict = {}
-    for i in range(1, 4):
-        random.shuffle(numbers)
-        print(numbers)
-        aList = [
-            jload[str(numbers[0])][1],
-            jload[str(numbers[1])][1],
-            jload[str(numbers[2])][1]
-        ]
-        random.shuffle(aList)
-        qDict[i] = {
-            'q': [
-                jload[str(numbers[0])][0],
-                jload[str(numbers[0])][1]
-            ],
-            'a': aList
-        }
-
-    pprint(qDict)
-    qString = json.dumps(qDict)   
-
-    emit('questions', {'qs': qString, 'room': room['room']}, room=room['room'])
+    emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'opponent':opponent}, room=room)
 
 
 @socketio.on('choice_made')
@@ -320,9 +317,6 @@ def finish(data):
     
     game.results = str(game_results)
     db.session.commit()
-
-
-
       
     print ('GAME_RESULTS', game_results)
     
