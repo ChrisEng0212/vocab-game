@@ -1,0 +1,176 @@
+
+
+.card {
+  background: white;  
+  border: none;
+  border-radius: 0px;
+  margin-bottom: 0px;
+}
+
+.card-header {
+  background: white;  
+  border: none;
+  border-radius: 0px;
+  margin-bottom: 0px;
+  padding: 5px 20px;
+}
+
+.card-body {
+  background: white;  
+  border: none;
+  border-radius: 0px;
+  margin-bottom: 0px;
+  padding: 20px 20px;
+}
+
+audio { 
+    width: 250px; 
+    display: block; 
+    margin-left:10px; }
+
+body {  
+    color: #333333;
+    margin-top: 5rem;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: #444444;
+  }
+  
+  .bg-steel {
+    background-color: #5f788a;
+  }
+  
+  .site-header .navbar-nav .nav-link {
+    color: #f5f5f5;
+  }
+  
+  .site-header .navbar-nav .nav-link:hover {
+    color: #ffffff;
+  }
+  
+  .site-header .navbar-nav .nav-link.active {
+    font-weight: 500;
+  }
+  
+  
+
+  .content-section {
+    background: #ffffff;
+    padding: 10px 20px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    margin-bottom: 20px;
+  }
+
+  .box-section {
+    background: #ffffff;
+    padding: 10px 10px;
+    border: none;
+    width: 250px;    
+    margin-left: 5px;
+    ;
+  }
+  
+  .article-title {
+    color: #444444;
+  }
+  
+  a.article-title:hover {
+    color: #428bca;
+    text-decoration: none;
+  }
+  
+  .article-content {
+    white-space: pre-line;
+  }
+  
+  .article-img {
+    height: 65px;
+    width: 65px;
+    margin-right: 16px;
+  }
+  
+  .article-metadata {
+    padding-bottom: 1px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid #e3e3e3
+  }
+  
+  .article-metadata a:hover {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .article-svg {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+  }
+  
+  .account-img {
+    height: 100px;
+    width: 100px;
+    margin-right: 20px;
+    margin-bottom: 16px;
+  }
+
+  .chat-img {
+    height: 40px;
+    width: 40px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+
+  
+  .account-heading {
+    font-size: 2.5rem;
+  }
+
+  input[type="file"] {
+    position: absolute;
+    opacity: 0;     
+}
+
+.browse-btn {
+  background: #03A595;
+  color: #fff;
+  min-height: 35px;
+  padding: 10px;
+  border: none;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+
+
+.btn-audio {
+  width: 100px;  
+}
+
+
+
+
+
+table {
+  width: 100%;
+}
+.first {
+  width: 50%;
+}
+.ellipsis {
+  position: relative;
+}
+.ellipsis:before {
+  content: '&nbsp;';
+  visibility: hidden;
+}
+.ellipsis span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

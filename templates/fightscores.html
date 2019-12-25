@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="content-section" >
+    <h1 style="display:inline"> Results </h1>    
+<br>
+<br>
+<br>
+
+		<table>
+		<thead>
+        <tr>
+			<th scope="col" style=""> <h5 style="">Question</h5> </th>
+
+			<th scope="col" style=""><h5 style="" >{{user}}</h5> </th>
+
+            <th scope="col" style=""><h5 style="" >{{opponent}}</h5></th>
+
+			<th scope="col" style=""><h5 style="" >Speed</h5></th>
+		</tr>
+		</thead>
+
+		<tbody>
+			{% for r in rDict %}
+			<tr>			
+				<td><h5 style=""> {{r}}</h5></td>
+				<td><h5 style=""> {{rDict[r][0]}}</h5></td>
+				<td><h5 style="">{{rDict[r][0]}}</h5></td>
+				<td><h5 style="">{{rDict[r][4]}}</h5></td>				
+			</tr>
+			{% endfor %}
+		</tbody>
+		
+		</table>
+
+		
+</div>
+
+
+
+
+
+{% endblock content %}
+
+
+{% block script %}
+
+
+
+
+{% endblock %}  
+
+    
+

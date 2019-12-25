@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="content-section">
+    <h1> Game Zone Arena </h1>
+
+    <br>
+    <h3> Welcome {{current_user.username}}. Good Luck in the arena today!
+</div>
+
+<div class="content-section">  
+
+    <h1> <a href="{{url_for('fight')}}">Fight </a> </h1>
+</div>
+
+
+
+{% endblock content %}
+
+{% block script %}
+
+
+
+{% endblock %}  
+
+    
+
