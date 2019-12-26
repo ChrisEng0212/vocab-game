@@ -264,6 +264,10 @@ def set_game():
         'p2': pDict['p2']
         }
 
+@socketio.on('connect')
+def on_connect():
+    """User connects"""
+    print('connect')
 
 
 @socketio.on('join')

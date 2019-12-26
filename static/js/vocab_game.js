@@ -11,12 +11,12 @@ $(document).ready(function(){
 
     socket.on('connect', function(){
         //sends to app.py as msg which it prints
+        console.log('connect')
         socket.send('User has connected')
     });
     
     
-    $('#readyButton').on('click', function() {  
-        alert('ready')      
+    $('#readyButton').on('click', function() {
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 
