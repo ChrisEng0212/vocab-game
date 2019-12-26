@@ -2,6 +2,8 @@ from flask import Flask, render_template   #app = Flask(__name__)
 from flask_sqlalchemy import SQLAlchemy  #needed for app initialization (see below - db)
 from flask_bcrypt import Bcrypt  #needed for password storage
 from flask_login import LoginManager, current_user #needed for login
+from flask_socketio import SocketIO
+import gevent
 import os
 try:
     from config import BaseConfig
@@ -18,6 +20,7 @@ app = Flask(__name__)
 app.config['DEBUG'] = DEBUG
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI    
+socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt()

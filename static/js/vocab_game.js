@@ -3,7 +3,7 @@ $(document).ready(function(){
     var win = window.location.href
     console.log(win)
 
-    var socket = io.connect(win);
+    var socket = io();
 
     const username = document.querySelector('#username').innerHTML;
 
@@ -13,7 +13,8 @@ $(document).ready(function(){
     });
     
     
-    $('#readyButton').on('click', function() {        
+    $('#readyButton').on('click', function() {  
+        alert('ready')      
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 
