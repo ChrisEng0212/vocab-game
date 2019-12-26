@@ -69,9 +69,10 @@ def fight():
         flash('Please login', 'danger')
         return redirect(url_for('home'))
 
+    
     users = {
         1: [current_user.username, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHYKxS5kWkgLPasL6-7by-00UWkA4qmh96e5g8m3VfxBpOzPgR&s'],
-        2: ['Unknown', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVh-nPVkZ4hnJXNsFoUOWH2B7o49NLqwN8jr6hefjLDJqWHi83&s']
+        2: ['Waiting', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVh-nPVkZ4hnJXNsFoUOWH2B7o49NLqwN8jr6hefjLDJqWHi83&s']
     }
       
 

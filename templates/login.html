@@ -7,7 +7,7 @@
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Log In</legend>
 
-                <h5> You can use a fake name to compete if you want eg Steve Jobs or Mario</h5>
+                <h5 style="color:hotpink"> You can use a fake name to compete if you want eg Steve Jobs or Mario</h5>
 
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
@@ -23,8 +23,8 @@
                     {% endif %}
                 </div>
 
-                <h5> Use you student ID to get bonus points if you win</h5>
-                
+                <h5> Use your student ID to get bonus points if you win</h5>
+
                 <div class="form-group">
                     {{ form.studentID.label(class="form-control-label") }}
                     {% if form.studentID.errors %}

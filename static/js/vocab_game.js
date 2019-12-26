@@ -1,6 +1,9 @@
 $(document).ready(function(){
 
-    var socket = io.connect('http://127.0.0.1:5000/');
+    var win = window.location.href
+    console.log(win)
+
+    var socket = io.connect(win);
 
     const username = document.querySelector('#username').innerHTML;
 
