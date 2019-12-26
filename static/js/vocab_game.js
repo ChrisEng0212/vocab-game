@@ -3,7 +3,9 @@ $(document).ready(function(){
     var win = window.location.href
     console.log(win)
 
-    var socket = io();
+    var socket = io(win);
+
+    console.log(socket)
 
     const username = document.querySelector('#username').innerHTML;
 
