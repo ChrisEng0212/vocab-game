@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () =>{
-
-    var win = window.location.href
-    console.log(win)
-
     
-
-    var socket = io.connect('http://' + document.domain + ':' + location.port, {transports: ['websocket']});
+    var link = location.protocol + '//' + document.domain + ':' + location.port
+    console.log(link)
+    
+    var socket = io.connect(link);
+    //var socket = io.connect('http://' + document.domain + ':' + location.port, {transports: ['websocket']});
 
     console.log(socket)
 

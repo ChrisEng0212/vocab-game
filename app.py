@@ -10,11 +10,13 @@ try:
     from config import BaseConfig
     DEBUG = BaseConfig.DEBUG
     SECRET_KEY = BaseConfig.SECRET_KEY
-    SQLALCHEMY_DATABASE_URI = BaseConfig.SQLALCHEMY_DATABASE_URI    
+    SQLALCHEMY_DATABASE_URI = BaseConfig.SQLALCHEMY_DATABASE_URI 
+    LOCAL = True   
 except:
     DEBUG = os.environ['DEBUG']
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    LOCAL = False
 
 
 app = Flask(__name__)
@@ -34,8 +36,10 @@ login.login_message_category = 'info'
 from routes import *
 
 
-if __name__ == '__main__': 
-    socketio.run(app)
-    #app.run(debug=True)
+if __name__ == '__main__':
+    if LOCAL:          
+        socketio.run(app)
+    else:
+        app.run(debug=True)
     
     
