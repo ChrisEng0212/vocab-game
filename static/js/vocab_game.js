@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     
     
     $('#readyButton').on('click', function() {
+        console.log('readyButton Activated')
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 

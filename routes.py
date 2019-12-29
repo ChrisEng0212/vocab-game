@@ -273,10 +273,10 @@ def on_connect():
 @socketio.on('join')
 def on_join(data):
     """User joins a room"""
-    
+    print('join started')
     player_game = set_game()
     #return {'player': player, 'game': game 'qString': qString}
-
+    print (player_game)
     room = player_game['game']
     player = player_game['player']
     qString = player_game['qString']

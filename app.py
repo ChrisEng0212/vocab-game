@@ -39,7 +39,7 @@ from routes import *
 if __name__ == '__main__':
     if LOCAL:          
         socketio.run(app)
-    else:
+    else:        
         app.run(debug=True)
     
     
