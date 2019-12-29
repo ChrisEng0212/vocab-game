@@ -1,4 +1,4 @@
-$(document).ready(function(){
+document.addEventListener('DOMContentLoaded', () =>{
 
     var win = window.location.href
     console.log(win)
