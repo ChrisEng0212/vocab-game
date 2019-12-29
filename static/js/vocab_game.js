@@ -3,7 +3,9 @@ $(document).ready(function(){
     var win = window.location.href
     console.log(win)
 
-    var socket = io(win);
+    
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     console.log(socket)
 
