@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 
     socket.on('connect', function(){
         //sends to app.py as msg which it prints
-        console.log('connect')
+        console.log('connect_js')
         socket.send('User has connected')
     });
     

@@ -39,10 +39,10 @@ from routes import *
 
 
 if __name__ == '__main__':
-    if LOCAL:
+    if LOCAL == True:
         print('LOCAL')          
         socketio.run(app)
-    else:     
+    elif LOCAL == False:     
         print ('DEBUG ON')   
         app.run(debug=True)
     

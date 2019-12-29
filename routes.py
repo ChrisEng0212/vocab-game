@@ -267,7 +267,7 @@ def set_game():
 @socketio.on('connect')
 def on_connect():
     """User connects"""
-    print('connect')
+    print('connect_python')
     send({"username": current_user.username})
 
 
