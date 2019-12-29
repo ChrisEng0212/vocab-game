@@ -24,7 +24,7 @@ app.config['DEBUG'] = DEBUG
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI   
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-socketio = SocketIO(app)
+#socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt()
@@ -33,13 +33,16 @@ login.login_view = 'login' # if user isn't logged in it will redirect to login p
 login.login_message_category = 'info'
 
 
+
+
 from routes import *
 
 
 if __name__ == '__main__':
     if LOCAL:          
         socketio.run(app)
-    else:        
+    else:     
+        print ('DEBUG ON')   
         app.run(debug=True)
     
     
