@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy  #needed for app initialization (see bel
 from flask_bcrypt import Bcrypt  #needed for password storage
 from flask_login import LoginManager, current_user #needed for login
 from flask_socketio import SocketIO
-import gevent
+
 ##https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent/page/12
 import os
 try:
@@ -32,7 +32,11 @@ login = LoginManager(app)
 login.login_view = 'login' # if user isn't logged in it will redirect to login page
 login.login_message_category = 'info'
 
+socketio = SocketIO(app, manage_session=False)
 
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 
 from routes import *

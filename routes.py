@@ -11,11 +11,7 @@ from pprint import pprint
 from models import *
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
-@login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
 
-socketio = SocketIO(app, manage_session=False)
 
 
 @app.route("/login", methods=['GET', 'POST'])
