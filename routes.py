@@ -4,7 +4,7 @@ import ast
 import json
 from random import randint
 from flask import render_template, url_for, flash, redirect, request, abort, jsonify  
-from app import app, db, bcrypt
+from app import app, db, bcrypt, socketio, login
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from forms import LoginForm
 from pprint import pprint
