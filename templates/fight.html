@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="content-section" >
-    <h1 style="display:inline"> Fight Zone </h1>
+    <h1 style="display:inline"> Challenge Zone </h1>
     <h1 id="zone" style="display:inline"> </h1>
 <br>
 <legend class="border-bottom mb-4"> </legend>
@@ -13,8 +13,10 @@
 				<div align="center">
 				    <img class="rounded-circle account-img" src="{{users[1][1]}}">
 						<br>
-						 <h5 style="color:white;background:red" id="ready1">{{users[1][0]}}</h5>
-                        
+						<div class="player-div" id="ready1">
+						 <h5 style="color:white">{{users[1][0]}}</h5>
+						</div>
+                        <br>
                         <button id="readyButton" class="btn btn-outline-danger btn-sm"> Ready {{user}}</button>
 				</div>
 			</th>
@@ -23,7 +25,10 @@
 				<div align="center">
 				    <img class="rounded-circle account-img" src="{{users[2][1]}}">
 						<br>
-						 <h5 style="color:white;background:red"  id="ready2" >{{users[2][0]}}</h5>
+						<div class="player-div" id="ready2">
+						<h5 style="color:white">{{users[2][0]}}</h5>
+						</div>
+                        <br>
                         
                         <button style="visibility:hidden" class="btn btn-outline-danger btn-sm"> Ready {{user}}</button>                       
 				</div>

@@ -134,7 +134,9 @@ function create_inputs(q){
 
         var label = document.createElement("label");
         label.setAttribute('for' , choice);
+        label.setAttribute('class' , 'choice');
         label.innerHTML = choice
+        
         parent.appendChild(label);
 
         var br = document.createElement("br");        
@@ -192,12 +194,14 @@ function send_result(choice, answer, question){
 
     var result1 = document.createElement("h5")        
         result1.innerHTML = "Question: " + question
+        result1.style = "color:purple"
         results.appendChild(result1);
     var result2 = document.createElement("h5")        
         result2.innerHTML = "Answer: " + answer
+        result1.style = "color:blue"
         results.appendChild(result2);
     var result3 = document.createElement("h5")        
-        result3.innerHTML = "Point: " + point
+        result3.innerHTML = "Point: " + point        
         results.appendChild(result3);    
     
     //sends the signal to socket that a choice has been made
@@ -212,7 +216,7 @@ function send_result(choice, answer, question){
 
 function Start(n){        
         document.getElementById('head').innerHTML = 'Time'
-        timer.innerHTML = "10"
+        timer.innerHTML = "9"
         var x = setInterval(function() {            
             var timer = document.getElementById('timer')
             var count = Number(timer.innerHTML)            

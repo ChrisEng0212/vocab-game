@@ -1,5 +1,6 @@
 
 
+
 .card {
   background: white;  
   border: none;
@@ -36,6 +37,11 @@ body {
   h1, h2, h3, h4, h5, h6 {
     color: #444444;
   }
+
+  .choice{
+    color:purple;
+    font-size: 18px;
+  }
   
   .bg-steel {
     background-color: #5f788a;
@@ -53,6 +59,13 @@ body {
     font-weight: 500;
   }
   
+  .player-div{
+    border-radius: 25px;
+    background-color:rgb(252, 30, 30);    
+    padding: 25px;
+    width: 200px;
+    height: 80px;    
+  }
   
 
   .content-section {

@@ -144,16 +144,23 @@ def fight_scores(game):
 
     if scores[user] > scores[opponent]:
         winner = user
-    elif scores[opponent] < scores[user]:
+    elif scores[opponent] > scores[user]:
         winner = opponent
     else:
         winner = 'EVENS'
+
+    # add winner to games data base
+    data.winner = winner
+    db.session.commit()
+    
+
+
 
     return render_template('fightscores.html', title='Scores', rDict=rDict, user=current_user.username, opponent=opponent, scores=scores, winner=winner)
 
 
 def add_questions ():
-    with open('Questions.json', "r") as f:
+    with open('FRDQs.json', "r") as f:
         jload = json.load(f)
 
     # make a list of number as long as the json dictionary
@@ -215,7 +222,7 @@ def set_game():
             'p1' : current_user.username, 
             'p2' : 'Waiting', 
             'sid1' : request.sid, 
-            'sid2' : None
+            'sid2' : None            
         }
 
         qString = add_questions() # random questions function
@@ -234,6 +241,7 @@ def set_game():
         qDict = ast.literal_eval(challenge.records)
         pDict['p2'] = current_user.username
         pDict['sid2'] = request.sid 
+        pDict['gameID'] = gameID
         print (pDict) 
 
         ## create results dictionary for score tally later
