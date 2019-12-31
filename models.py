@@ -32,7 +32,8 @@ class MyModelView(ModelView):
             if current_user.id == 1:
                 return True
             else:
-                return False
+                # need to change back to false in production mode
+                return True
         else:
             # need to change back to false in production mode
             return True
