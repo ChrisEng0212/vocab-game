@@ -40,7 +40,7 @@ body {
 
   .choice{
     color:purple;
-    font-size: 18px;
+    font-size: 16px;
   }
   
   .bg-steel {
@@ -61,10 +61,11 @@ body {
   
   .player-div{
     border-radius: 25px;
-    background-color:rgb(252, 30, 30);    
+    background-color: darkgray;
+    border: 2px solid #dddddd;
     padding: 25px;
     width: 100%;
-    height: 80px;    
+    height: 100%;    
   }
   
 
@@ -123,8 +124,7 @@ body {
   
   .account-img {
     height: 100px;
-    width: 100px;
-    margin-right: 20px;
+    width: 100px;    
     margin-bottom: 16px;
   }
 

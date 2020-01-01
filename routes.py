@@ -1,4 +1,5 @@
 import sys, boto3, random
+from random import shuffle
 import datetime
 import ast
 import json
@@ -58,6 +59,7 @@ def home():
 
     return render_template("home.html")
 
+
 @app.route("/fight", methods=['GET', 'POST'])
 def fight():
 
@@ -65,13 +67,14 @@ def fight():
         flash('Please login', 'danger')
         return redirect(url_for('home'))
 
+    unknown = 'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/waiting.png'
     
+
     users = {
-        1: [current_user.username, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHYKxS5kWkgLPasL6-7by-00UWkA4qmh96e5g8m3VfxBpOzPgR&s'],
-        2: ['Waiting', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVh-nPVkZ4hnJXNsFoUOWH2B7o49NLqwN8jr6hefjLDJqWHi83&s']
+        1: ['Waiting', unknown],
+        2: ['Waiting', unknown]
     }
       
-
     return render_template('fight.html', title='Fight', users=users, username=current_user.username)
 
 @app.route("/fightscores/<string:game>", methods=['GET', 'POST'])
@@ -85,78 +88,67 @@ def fight_scores(game):
     game_results = ast.literal_eval(data.results)
     game_qs = ast.literal_eval(data.records)   
     
+    print('GAME_RESULTS')
     pprint(game_results)
 
     opponent = None 
     player = current_user.username
 
-    rDict = {}
     
-    scores = {
-        player: 0,
-        #opponent : 0  
-
-    }
-
-    for key in game_results:
-        for user in game_results[key]:
-            if user == player:
-                rDict[key] = game_results[key][user]
-            else:
-                opponent = user
-                scores[user] = 0 
-    
+    # set opponent name
     for key in game_results:
         for user in game_results[key]:
             if user != current_user.username:
-                rDict[key] += game_results[key][user]
+                opponent = user
+                print('opponent name found')
+        break
     
-
-      
-
-    for r in rDict:
-        # if both answers are correct
-        if rDict[r][0] == 1 and rDict[r][2] == 1: 
-
-            scores[player] +=1 
-            scores[opponent] +=1
-
-            if rDict[r][1] > rDict[r][3]:
-                rDict[r].append('faster + 1')
-                scores[player] += 1
-
-            elif rDict[r][1] ==rDict[r][3]:
-                rDict[r].append('even')    
+    for key in game_results:
+        if game_results[key][player][0] == 1 and game_results[key][opponent][0] == 1:
+            if game_results[key][player][1] > game_results[key][opponent][1]:
+                game_results[key][player][1] = 1
+                game_results[key][opponent][1] = 0
+            elif game_results[key][player][1] < game_results[key][opponent][1]:
+                game_results[key][player][1] = 0
+                game_results[key][opponent][1] = 1
             else:
-                rDict[r].append('slower')
-                scores[opponent] += 1
-        elif rDict[r][0] == 1:
-            scores[player] += 1
-            rDict[r].append('-')
-        elif rDict[r][2] == 1:
-            scores[opponent] += 1
-            rDict[r].append('-')
-        
-        
+                game_results[key][player][1] = 0
+                game_results[key][opponent][1] = 0
+        else:
+            game_results[key][player][1] = 0
+            game_results[key][opponent][1] = 0
 
-    print (rDict) 
-    print (scores) 
+    print('TIME_RESULTS')
+    pprint(game_results)
 
-    if scores[user] > scores[opponent]:
-        winner = user
-    elif scores[opponent] > scores[user]:
+    scores = {
+        player : [0, 0] , 
+        opponent : [0, 0] 
+    }
+
+    # calculate scores
+    for key in game_results:
+        scores[player][0] += sum(game_results[key][player])
+        scores[opponent][0] += sum(game_results[key][opponent])
+    
+    print ('SCORES', scores)
+    game_results['SCORE'] = scores
+
+    if scores[player] > scores[opponent]:
+        winner = player
+    elif scores[opponent] > scores[player]:
         winner = opponent
     else:
         winner = 'EVENS'
 
     # add winner to games data base
     data.winner = winner
-    db.session.commit()
-    
+    db.session.commit()   
+
+    return render_template('fightscores.html', title='Scores', player=player, opponent=opponent, game_results=game_results, winner=winner)
 
 
 
-    return render_template('fightscores.html', title='Scores', rDict=rDict, user=current_user.username, opponent=opponent, scores=scores, winner=winner)
 
 
 def add_questions ():
@@ -203,6 +195,19 @@ def add_questions ():
     return qString
 
 def set_game():
+    avatars = [
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_01.PNG',
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_02.PNG', 
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_03.PNG',
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_04.PNG', 
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_05.PNG',
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_06.PNG',
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_07.PNG', 
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_08.PNG', 
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_09.PNG',
+        'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_10.PNG' 
+    ]
+    
     games = Games.query.all()
 
     # assume no games are set
@@ -217,12 +222,16 @@ def set_game():
 
     # no game ready to join, so make new game
     if gameSet == None: 
-        
+
+        random.shuffle(avatars)
+
         pDict = {
             'p1' : current_user.username, 
             'p2' : 'Waiting', 
             'sid1' : request.sid, 
-            'sid2' : None            
+            'sid2' : None, 
+            'avatar1' : avatars[0],
+            'avatar2' : avatars[1]
         }
 
         qString = add_questions() # random questions function
@@ -250,8 +259,7 @@ def set_game():
             rDict[qDict[number]['q'][0]] = { pDict['p1'] : [0,0], pDict['p2'] : [0,0] }
 
         print ('RDICT', rDict)
-        rString = json.dumps(rDict)                                   
-
+        rString = json.dumps(rDict)  
         challenge.results = rString
         challenge.players = str(pDict)
         challenge.gameSet = 1        
@@ -261,11 +269,11 @@ def set_game():
         qString = challenge.records
 
     return {
+        # this will be joining as p1 or as p2
         'player': player, 
         'game': game, 
         'qString': qString, 
-        'p1': pDict['p1'],
-        'p2': pDict['p2']
+        'pDict' : pDict
         }
 
 @socketio.on('connect')
@@ -285,17 +293,11 @@ def on_join(data):
     room = player_game['game']
     player = player_game['player']
     qString = player_game['qString']
-    p1 = player_game['p1']
-    p2 = player_game['p2']    
-
-    if p1 == current_user.username:
-        opponent = p2
-    else:
-        opponent = p1
+    pDict = player_game['pDict']
     
     join_room(room)      
     
-    emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'opponent':opponent}, room=room)
+    emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'pDict': pDict}, room=room)
 
 
 @socketio.on('choice_made')
@@ -331,3 +333,7 @@ def finish(data):
     print ('GAME_RESULTS', game_results)
     
     socketio.emit('end', {'username':username}, room=room)
+
+@socketio.on('disconnect')
+def test_disconnect():
+    print('Client disconnected')

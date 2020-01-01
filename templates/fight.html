@@ -2,36 +2,32 @@
 
 {% block content %}
 
-<div class="content-section" >
+<div class="content-section" align="center" >
     <h1 style="display:inline"> Challenge Zone </h1>
     <h1 id="zone" style="display:inline"> </h1>
 <br>
 <legend class="border-bottom mb-4"> </legend>
+		 <button id="readyButton" class="btn btn-danger">Ready</button> 
+		 <br>
 		<table>
 		
 			<th scope="col" style="">
-				<div align="center">
-				    <img class="rounded-circle account-img" src="{{users[1][1]}}">
+				
+				<div class="player-div" id="ready1" align="center">
+						<img class="rounded-circle account-img" src="{{users[1][1]}}" id="img1">
 						<br>
-						<div class="player-div" id="ready1">
-						 <h5 style="color:white">{{users[1][0]}}</h5>
-						</div>
-                        <br>
-                        <button id="readyButton" class="btn btn-outline-danger btn-sm"> Ready {{user}}</button>
+						<h5 style="color:white" id="name1">{{users[1][0]}}</h5>	
+                       
 				</div>
 			</th>
 
             <th scope="col" style="">
-				<div align="center">
-				    <img class="rounded-circle account-img" src="{{users[2][1]}}">
-						<br>
-						<div class="player-div" id="ready2">
-						<h5 style="color:white">{{users[2][0]}}</h5>
-						</div>
-                        <br>
-                        
-                        <button style="visibility:hidden" class="btn btn-outline-danger btn-sm"> Ready {{user}}</button>                       
-				</div>
+				<div class="player-div" id="ready2" align="center">
+				    	<img class="rounded-circle account-img" src="{{users[2][1]}}" id="img2">
+						<br>						
+						<h5 style="color:white" id="name2">{{users[2][0]}}</h5>						
+                                               
+                       
 			</th>
 		
 		</table>
@@ -47,7 +43,7 @@
 </div>
 
 
-<div class="content-section" id="qBox" align="center" style="height:200px">		    
+<div class="content-section" id="qBox" align="center" style="height:300px">		    
 
 </div>
 

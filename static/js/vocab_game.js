@@ -27,15 +27,27 @@ document.addEventListener('DOMContentLoaded', () =>{
     socket.on('playerReady', function(data){        
         console.log(data)
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
-        if (data){
-            document.querySelector('#ready1').style="color:white;background:green"
-            document.querySelector('#readyButton').style="visibility:hidden"
+        if (data){            
+            document.querySelector('#readyButton').style="visibility:hidden"            
             document.getElementById('qJSON').innerHTML = data.qString
-        }
-        if (data.player == 'p2'){
-             document.querySelector('#ready2').style = "color:white;background:green"  
-             document.querySelector('#ready2').innerHTML = data.opponent      
-             Wait(1)
+            if (data.player == 'p1'){
+                document.querySelector('#name1').style="width:50%; border-style: inset; border-size: 2px; border-color: purple"
+                console.log('p1 set')
+                document.getElementById('img1').src = data.pDict['avatar1']
+                document.querySelector('#name1').innerHTML = data.pDict['p1']            
+            }
+            else if (data.player == 'p2'){
+                document.getElementById('img1').src = data.pDict['avatar1']
+                document.querySelector('#name1').innerHTML = data.pDict['p1'] 
+                document.getElementById('img2').src = data.pDict['avatar2']
+                document.querySelector('#name2').innerHTML = data.pDict['p2']
+                if (username == data.pDict['p2']){ 
+                    document.querySelector('#name2').style = "width:50%; border-style: inset; border-size: 2px; border-color: purple" 
+                }
+                console.log('p2 set')
+                Wait(1)
+            }           
+            
         }
         document.getElementById('zone').innerHTML = data.room 
     });
@@ -55,10 +67,10 @@ document.addEventListener('DOMContentLoaded', () =>{
         console.log('turn', data)
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
         if (data.username == username){
-            document.querySelector('#ready1').style="color:white;background:blue"            
+            document.querySelector('#ready1').style="background:darkturquise"            
         }
         else{
-            document.querySelector('#ready2').style="color:white;background:blue" 
+            document.querySelector('#ready2').style="background:darkturquise" 
         }        
     });
     
@@ -74,8 +86,8 @@ function checkScore(game){
 
 function create_inputs(q){ 
     //set player bars back to green
-    document.querySelector('#ready1').style="color:white;background:green"
-    document.querySelector('#ready2').style="color:white;background:green"
+    document.querySelector('#ready1').style="color:white;background:hotpink"
+    document.querySelector('#ready2').style="color:white;background:hotpink"
 
     var container = document.getElementById("qBox");
 
