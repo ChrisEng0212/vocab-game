@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () =>{
             document.querySelector('#readyButton').style="visibility:hidden"            
             document.getElementById('qJSON').innerHTML = data.qString
             if (data.player == 'p1'){
-                document.querySelector('#name1').style="width:50%; border-style: inset; border-size: 2px; border-color: purple"
+                document.querySelector('#name1').style="color:white; width:50%; border-style: inset; border-size: 2px; border-color: purple"
                 console.log('p1 set')
                 document.getElementById('img1').src = data.pDict['avatar1']
                 document.querySelector('#name1').innerHTML = data.pDict['p1']            
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () =>{
                 document.getElementById('img2').src = data.pDict['avatar2']
                 document.querySelector('#name2').innerHTML = data.pDict['p2']
                 if (username == data.pDict['p2']){ 
-                    document.querySelector('#name2').style = "width:50%; border-style: inset; border-size: 2px; border-color: purple" 
+                    document.querySelector('#name2').style = "color:white; width:50%; border-style: inset; border-size: 2px; border-color: purple" 
                 }
                 console.log('p2 set')
                 Wait(1)

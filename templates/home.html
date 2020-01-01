@@ -9,9 +9,15 @@
     <h3> Welcome {{current_user.username}}. Good Luck in the arena today!
 </div>
 
-<div class="content-section">  
-
-    <h1> <a href="{{url_for('fight')}}">Challenge</a> </h1>
+<div class="content-section" align="center">  
+    <button class"btn btn-warning"><h3> <a href="{{url_for('fight')}}">Challenge</a> </h3></button>
+    <br>
+    <br>
+    <h3> Waiting: <h3>
+    <h3 id="waiting"> <h3>
+    <br>
+    <h3> Games in progress <h3>
+    <h3 id="games"> <h3>
 </div>
 
 
@@ -20,9 +26,31 @@
 
 {% block script %}
 
+<script>        
 
+    var myVar = setInterval(waiting, 2000);
+    
+    function waiting() {		
+		$.ajax({
+			data : {
+				home : 'home'
+			},
+			type : 'POST',
+            url : '/waiting',            
+		})
+		.done(function(data) {
+            console.log(data)            
+			
+            document.getElementById('waiting').innerHTML = data.count 
+            document.getElementById('games').innerHTML = data.games
+			
+		});
+	
+    }
 
-{% endblock %}  
+</script>
+
+{% endblock %}
 
     
 

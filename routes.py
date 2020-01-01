@@ -1,6 +1,6 @@
 import sys, boto3, random
 from random import shuffle
-import datetime
+from datetime import datetime, timedelta
 import ast
 import json
 from random import randint
@@ -58,6 +58,25 @@ def logout():
 def home():  
 
     return render_template("home.html")
+
+@app.route('/waiting', methods=['POST'])
+def waiting():  
+
+    count = Games.query.filter_by(gameSet=0).count()
+    print ('Waiting', count)
+    games = Games.query.filter_by(gameSet=1).count()
+    game_records = Games.query.filter_by(gameSet=1).all()
+    for game in game_records:
+        if game.date_posted < datetime.now() - timedelta(minutes=2):
+            game.gameSet == 3
+            print ('game stopped')
+            db.session.commit()
+
+    print ('GAMES', games)
+
+    home = request.form ['home']    
+    
+    return jsonify({'count' : count , 'games' : games }) 
 
 
 @app.route("/fight", methods=['GET', 'POST'])
@@ -328,6 +347,7 @@ def finish(data):
         game_results[q][username][1] = ajData[q][1]
     
     game.results = str(game_results)
+    game.gameSet = 2
     db.session.commit()
       
     print ('GAME_RESULTS', game_results)
