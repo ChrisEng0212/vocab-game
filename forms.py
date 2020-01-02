@@ -15,3 +15,8 @@ class LoginForm(FlaskForm):
                             DataRequired()])
     #password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
+
+    def validate_username(self, username):  # the field is username
+        user = User.query.filter_by(username=username.data).first()  #User was imported at the top # first means just find first instance?
+        if user:  # meaning if True
+            raise ValidationError('That name has already been used')

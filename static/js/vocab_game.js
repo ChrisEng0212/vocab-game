@@ -19,30 +19,33 @@ document.addEventListener('DOMContentLoaded', () =>{
     
     $('#readyButton').on('click', function() {
         console.log('readyButton Activated')
+        document.querySelector('#readyButton').style="visibility:hidden"   
+        alert('if your game does not load in one min, please fresh')
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 
-
+      
     //data will be a json automatically
     socket.on('playerReady', function(data){        
         console.log(data)
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
         if (data){            
-            document.querySelector('#readyButton').style="visibility:hidden"            
+                     
             document.getElementById('qJSON').innerHTML = data.qString
             if (data.player == 'p1'){
-                document.querySelector('#name1').style="color:white; width:50%; border-style: inset; border-size: 2px; border-color: purple"
+                document.getElementById('player').innerHTML = 'p1'
+                document.querySelector('#name1').style="color:purple; background:white" 
                 console.log('p1 set')
                 document.getElementById('img1').src = data.pDict['avatar1']
                 document.querySelector('#name1').innerHTML = data.pDict['p1']            
             }
-            else if (data.player == 'p2'){
+            else if (data.player == 'p2'){                
                 document.getElementById('img1').src = data.pDict['avatar1']
                 document.querySelector('#name1').innerHTML = data.pDict['p1'] 
                 document.getElementById('img2').src = data.pDict['avatar2']
                 document.querySelector('#name2').innerHTML = data.pDict['p2']
                 if (username == data.pDict['p2']){ 
-                    document.querySelector('#name2').style = "color:white; width:50%; border-style: inset; border-size: 2px; border-color: purple" 
+                    document.querySelector('#name2').style = "color:purple; background:white" 
                 }
                 console.log('p2 set')
                 Wait(1)
@@ -54,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () =>{
 
     $('#clicker').on('click', function() {        
         var room = document.getElementById('zone').innerHTML
-        socket.emit('choice_made', {'username': username, 'room':room});
+        var player = document.getElementById('player').innerHTML
+        socket.emit('choice_made', {'username': username, 'room':room, 'player':player});
     }) 
     
     $('#finish').on('click', function() {
@@ -66,11 +70,12 @@ document.addEventListener('DOMContentLoaded', () =>{
     socket.on('turn', function(data){        
         console.log('turn', data)
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
-        if (data.username == username){
-            document.querySelector('#ready1').style="background:darkturquise"            
+        if (data.player == 'p1'){
+            document.querySelector('#ready1').style="background:darkturquoise"                        
         }
         else{
-            document.querySelector('#ready2').style="background:darkturquise" 
+            document.querySelector('#ready2').style="background:darkturquoise" 
+                 
         }        
     });
     
@@ -195,7 +200,7 @@ function send_result(choice, answer, question){
     }
 
     
-    console.log(question, choice, answer, time, point) 
+    console.log('CHECK', question, choice, answer, time, point) 
     
     ajData[question] = [point, time]
     console.log(ajData)
@@ -205,15 +210,15 @@ function send_result(choice, answer, question){
     container.appendChild(results);
 
     var result1 = document.createElement("h5")        
-        result1.innerHTML = "Question: " + question
+        result1.innerHTML = "Vocab: " + question
         result1.style = "color:purple"
         results.appendChild(result1);
     var result2 = document.createElement("h5")        
         result2.innerHTML = "Answer: " + answer
-        result1.style = "color:blue"
+        result2.style = "color:blue"
         results.appendChild(result2);
     var result3 = document.createElement("h5")        
-        result3.innerHTML = "Point: " + point        
+        result3.innerHTML = "point + " + point        
         results.appendChild(result3);    
     
     //sends the signal to socket that a choice has been made
@@ -247,7 +252,12 @@ function Start(n){
 
 function Wait(n) {    
     // when stops comes in at 1 instead of zero the timer should stop
-    timer.innerHTML = '3'
+    if (n == 1){
+        timer.innerHTML = '8'
+    }
+    else {
+        timer.innerHTML = '3'
+    }    
     document.getElementById('head').innerHTML = 'Next Q in..';
       
         var y = setInterval(function() {              

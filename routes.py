@@ -66,12 +66,7 @@ def waiting():
     print ('Waiting', count)
     games = Games.query.filter_by(gameSet=1).count()
     game_records = Games.query.filter_by(gameSet=1).all()
-    for game in game_records:
-        if game.date_posted < datetime.now() - timedelta(minutes=2):
-            game.gameSet == 3
-            print ('game stopped')
-            db.session.commit()
-
+    
     print ('GAMES', games)
 
     home = request.form ['home']    
@@ -170,14 +165,14 @@ def fight_scores(game):
 
 
 
-def add_questions ():
-    with open('FRDQs.json', "r") as f:
+def add_questions (q):
+    with open('ICCQs.json', "r") as f:
         jload = json.load(f)
 
     # make a list of number as long as the json dictionary
     numbers = list(range(1, len(jload)+1))
 
-    QUESTIONS = 6
+    QUESTIONS = q
     count = 1 
 
     qDict = {}
@@ -227,23 +222,23 @@ def set_game():
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_10.PNG' 
     ]
     
-    games = Games.query.all()
+    number_of_qs = 6
+    gameSet = None 
 
-    # assume no games are set
-    gameSet = None    
-    gameID = 0
-    for game in games:
-        # check if game is available
-        if game.gameSet == 0:
-            # no partner yet
-            gameID = game.id
-            gameSet = 1            
-
+    game = Games.query.filter_by(gameSet=0).first()
+    if game:
+        print ('FOUND GAME ', game)
+        game.gameSet = 1
+        gameID = game.id
+        gameSet = 1  # this means we are joining an existing game
+        db.session.commit()         
+          
     # no game ready to join, so make new game
     if gameSet == None: 
 
         random.shuffle(avatars)
 
+        # player dict
         pDict = {
             'p1' : current_user.username, 
             'p2' : 'Waiting', 
@@ -253,7 +248,7 @@ def set_game():
             'avatar2' : avatars[1]
         }
 
-        qString = add_questions() # random questions function
+        qString = add_questions(number_of_qs) # random questions function
 
         newGame = Games(players=str(pDict), gameSet=0, records=qString)
         db.session.add(newGame)
@@ -292,7 +287,8 @@ def set_game():
         'player': player, 
         'game': game, 
         'qString': qString, 
-        'pDict' : pDict
+        'pDict' : pDict, 
+        'qs' : number_of_qs
         }
 
 @socketio.on('connect')
@@ -313,10 +309,11 @@ def on_join(data):
     player = player_game['player']
     qString = player_game['qString']
     pDict = player_game['pDict']
+    qs = player_game['qs']
     
     join_room(room)      
     
-    emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'pDict': pDict}, room=room)
+    emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'pDict': pDict, 'qs': qs}, room=room)
 
 
 @socketio.on('choice_made')
@@ -324,9 +321,10 @@ def choice_made(data):
     print (data)  
 
     room = int(data['room'])
-    username = data['username']   
+    username = data['username'] 
+    player = data['player']  
     
-    socketio.emit('turn', {'username':username}, room=room)
+    socketio.emit('turn', {'player' : player}, room=room)
 
 @socketio.on('finish')
 def finish(data):
