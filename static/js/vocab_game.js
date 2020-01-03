@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     $('#readyButton').on('click', function() {
         console.log('readyButton Activated')
         document.querySelector('#readyButton').style="visibility:hidden"   
-        alert('if your game does not load in one min, please fresh')
+        alert('if your game does not load in a moment then please refresh')
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 
