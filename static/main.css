@@ -59,6 +59,17 @@ body {
     font-weight: 500;
   }
   
+  .myProgess{
+    width: 100%;
+    background-color: #ddd;
+  }
+
+  .barStyle{
+    width: 100%;
+    height: 30px;
+    background-color: purple;
+  }
+
   .player-div{
     border-radius: 25px;
     background-color: darkgray;

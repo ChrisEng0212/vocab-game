@@ -51,8 +51,15 @@
         </nav>
       </div>
     </header>
-    
-    <body style="background:steelblue" class="notranslate">
+
+    {% set colors = { 'ICC':'steelblue', 'Reading':'mediumaquamarine', 'Workplace':'NAVAJOWHITE' } %}
+    {% if current_user.test %}
+    <body style="background:{{colors[current_user.test]}}" class="notranslate">
+    {% else %}    
+    <body style="background:gray" class="notranslate">
+    {% endif %}
+
+   
 
     
     <main role="main" class="container">

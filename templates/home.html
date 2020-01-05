@@ -6,11 +6,19 @@
     <h1> Game Zone Arena </h1>
 
     <br>
-    <h3> Welcome {{current_user.username}}. Good Luck in the arena today!
+    {% if current_user.username %}
+    <h3> Welcome {{current_user.username}}. Good Luck in the arena today!</h3>
+    {% else %}
+    <h3> Welcome to the Game Zone. Please <a href="{{url_for('login')}}">Log In</a> </h3>
+    {% endif %}
+    <br>
+    <button class"btn btn-info" style="background:salmon"><h3> <a href="{{url_for('fight')}}">Challenge</a> </h3></button>
+
 </div>
 
+{% if current_user.studentID == '021281'%}
 <div class="content-section" align="center">  
-    <button class"btn btn-warning"><h3> <a href="{{url_for('fight')}}">Challenge</a> </h3></button>
+    
     <br>
     <br>
     <h3> Waiting: <h3>
@@ -19,6 +27,7 @@
     <h3> Games in progress <h3>
     <h3 id="games"> <h3>
 </div>
+{% endif %}
 
 
 
@@ -26,9 +35,9 @@
 
 {% block script %}
 
-<script>        
+<script>   
 
-    var myVar = setInterval(waiting, 2000);
+    //var myVar = setInterval(waiting, 10000);
     
     function waiting() {		
 		$.ajax({

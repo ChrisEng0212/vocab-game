@@ -19,8 +19,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     
     $('#readyButton').on('click', function() {
         console.log('readyButton Activated')
-        document.querySelector('#readyButton').style="visibility:hidden"   
-        alert('if your game does not load in a moment then please refresh')
+        document.querySelector('#readyButton').style="visibility:hidden"           
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
 
@@ -28,16 +27,19 @@ document.addEventListener('DOMContentLoaded', () =>{
     //data will be a json automatically
     socket.on('playerReady', function(data){        
         console.log(data)
+        let room = document.getElementById('zone') 
+        room.innerHTML = data.room 
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
-        if (data){            
-                     
+        if (data){   
             document.getElementById('qJSON').innerHTML = data.qString
             if (data.player == 'p1'){
                 document.getElementById('player').innerHTML = 'p1'
                 document.querySelector('#name1').style="color:purple; background:white" 
-                console.log('p1 set')
                 document.getElementById('img1').src = data.pDict['avatar1']
-                document.querySelector('#name1').innerHTML = data.pDict['p1']            
+                document.querySelector('#name1').innerHTML = data.pDict['p1']
+                //wait for player or play bot
+                Waiting(data.room)                            
+                           
             }
             else if (data.player == 'p2'){                
                 document.getElementById('img1').src = data.pDict['avatar1']
@@ -48,28 +50,58 @@ document.addEventListener('DOMContentLoaded', () =>{
                     document.querySelector('#name2').style = "color:purple; background:white" 
                 }
                 console.log('p2 set')
-                Wait(1)
+                qs = data.qs
+                Timer(1, qs)
             }           
             
         }
-        document.getElementById('zone').innerHTML = data.room 
+        
     });
 
-    $('#clicker').on('click', function() {        
+    function Waiting(room){
+        wait_clock = document.getElementById('name2')
+        wait_clock.innerHTML = '10'                    
+        var wait_timer = setInterval(function() {   
+            var count = Number(wait_clock.innerHTML) 
+            if (count){
+                var newCount = count - 1  
+                if (newCount == 0){
+                    wait_clock.innerHTML = 'Bot Loading..'
+                    clearInterval(wait_timer);  
+                    socket.emit('bot', {'room': room});           
+                } else {
+                    wait_clock.innerHTML = newCount
+                }
+            }
+            else {
+                clearInterval(wait_timer);  
+                console.log('player joined')
+            }  
+        }, 1000)
+    }
+
+
+    $('#clicker').on('click', function() {    
         var room = document.getElementById('zone').innerHTML
         var player = document.getElementById('player').innerHTML
         socket.emit('choice_made', {'username': username, 'room':room, 'player':player});
+    }) 
+
+    $('#bot').on('click', function() {    
+        var room = document.getElementById('zone').innerHTML        
+        socket.emit('choice_made', {'username': 'Bot', 'room':room, 'player':'p2'});
     }) 
     
     $('#finish').on('click', function() {
         var room = document.getElementById('zone').innerHTML 
         var ajData = this.value       
         socket.emit('finish', {'username': username, 'ajData':ajData, 'room':room}); // def on_join --> set_game
+        //close room to control lost_player alert
+        room.innerHTML = 0
     })  
 
     socket.on('turn', function(data){        
-        console.log('turn', data)
-        //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
+        console.log('turn', data)        
         if (data.player == 'p1'){
             document.querySelector('#ready1').style="background:darkturquoise"                        
         }
@@ -83,7 +115,36 @@ document.addEventListener('DOMContentLoaded', () =>{
         console.log('end', data)     
     });
 
+    
+
+    socket.on('botReady', function(data){            
+        console.log('bot', data)   
+        document.getElementById('img2').src = data.pDict['avatar2']
+        document.querySelector('#name2').innerHTML = data.pDict['p2']
+        bot = 100
+        Timer(1, data.qs, data.botDict)        
+    });
+    
+    $(window).on("unload", function(e) {
+        var room = document.getElementById('zone').innerHTML 
+        console.log('disconnect_js ', username)
+        socket.emit('lost_player', {'username': username, 'room': room });  
+    });
+
+    
+
+    socket.on('lost', function(data){ 
+        var clients = io.sockets.clients(data.room)       
+        console.log('lost', data, clients)          
+        alert('On no, it looks like ' + data.username + ' has left the game. Please continue and you will be the winner.')  
+    });
+    
+
 });//end of connect sesssion
+
+
+
+
 
 function checkScore(game){
     window.open(window.location.href + 'scores/' + game)
@@ -112,8 +173,7 @@ function create_inputs(q){
         parent.setAttribute('id', 'parent');
         container.appendChild(parent);
 
-    if (q > qNum){  
-        document.getElementById('stop').innerHTML = 'stop'     
+    if (q > qNum){          
         game = document.getElementById('zone').innerHTML    
         var end = document.createElement("button");        
         end.setAttribute('class' , "btn btn-warning" );           
@@ -189,10 +249,9 @@ function send_result(choice, answer, question){
     if (element){     
         container.removeChild(element);
     }
-
-    var time = parseInt(document.getElementById('timer').innerHTML);    
-
-    
+    var bar = document.getElementById('myBar')
+    var time = parseInt(bar.style.width)
+        
     if (choice == answer){         
         var point = 1
     } else {
@@ -229,52 +288,73 @@ function send_result(choice, answer, question){
 
     }
 
-
-
-function Start(n){        
-        document.getElementById('head').innerHTML = 'Time'
-        timer.innerHTML = "9"
-        var x = setInterval(function() {            
-            var timer = document.getElementById('timer')
-            var count = Number(timer.innerHTML)            
-            var newCount = count - 1              
-            
-            if (newCount == 0){
-                clearInterval(x);
-                remove_inputs() 
-                Wait(n+1)                
-            } 
-            else {
-                timer.innerHTML = newCount 
-            }
-        }, 1000)
-}
-
-function Wait(n) {    
-    // when stops comes in at 1 instead of zero the timer should stop
-    if (n == 1){
-        timer.innerHTML = '8'
+function Timer(n, qs, bot) { 
+    console.log(n, qs, bot)
+    if (n == qs + 1){
+        create_inputs(n)
     }
-    else {
-        timer.innerHTML = '3'
-    }    
-    document.getElementById('head').innerHTML = 'Next Q in..';
-      
-        var y = setInterval(function() {              
-            var timer = document.getElementById('timer')        
-            var count = Number(timer.innerHTML)        
-            var newCount = count - 1  
+    else{ 
+        if (n == 1){
+            timer.innerHTML = '5'
+        }
+        else {
+            timer.innerHTML = '3'
+        }    
+        document.getElementById('head').innerHTML = 'Question ' + n + ' in ';        
+            var wait_timer = setInterval(function() {   
+                           
+                var timer = document.getElementById('timer')        
+                var count = Number(timer.innerHTML)  
+                var newCount = count - 1  
+                if (newCount == 0){
+                    clearInterval(wait_timer);            
+                    create_inputs(n)
+                    Start(n, qs, bot)                                    
+                } else {
+                    timer.innerHTML = newCount
+                }
+            }, 1000)
+    }
 
-            
-            if (newCount == 0){
-                clearInterval(y);            
-                create_inputs(n)
-                if (document.getElementById('stop').innerHTML == 'go'){
-                    Start(n)
-                    }             
-            } else {
-                timer.innerHTML = newCount 
+    function Start(n, qs, bot){             
+            document.getElementById('head').innerHTML = 'Question ' + n   
+            document.getElementById('timer').innerHTML = ''
+            var progress = document.getElementById('countdown')
+            if (n == 1){
+                var bar = document.createElement("div");
+                bar.setAttribute('id', 'myBar')
+                bar.setAttribute('class', 'barStyle')
+                progress.appendChild(bar)                
             }
-        }, 1000)
-    
+            
+
+        var i = 100;
+        if (i == 100) {
+                i = 99;
+                let bar1 = document.getElementById('myBar')                
+                var width = 99;
+                var id = setInterval(frame, 70);
+            
+            function frame() {
+                if (width == 0) {
+                    remove_inputs() 
+                    Timer(n+1, qs, bot) 
+                    clearInterval(id);
+                    i = 100;
+                } else {
+                    width--;
+                    if (bot){
+                        if(width == bot[n]){
+                            document.getElementById('bot').click()  
+                        }
+                    }
+                    bar1.style.width = width + "%";
+                }
+            }
+        }
+       
 }
+
+
+    
+}//end of timer function

@@ -1,9 +1,10 @@
 import sys, boto3, random
-from random import shuffle
+import random
+#from random import shuffle
+#from random import randint
 from datetime import datetime, timedelta
 import ast
 import json
-from random import randint
 from flask import render_template, url_for, flash, redirect, request, abort, jsonify  
 from app import app, db, bcrypt, socketio, login
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -15,6 +16,23 @@ from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 
 
+def set_environment():
+    if current_user.is_authenticated:
+        course = User.query.filter_by(username=current_user.username).first().test
+        courseDict ={
+            'Reading': [GamesFRD, 'FRDQs.json', '_FRD'],
+            'ICC': [GamesICC, 'ICCQs.json', '_ICC'],
+            'Workplace': [GamesWPE, 'WPEQs.json', '_WPE']
+        }
+        Games = courseDict[course][0]
+        jDict = courseDict[course][1]
+        roomTag = courseDict[course][2]
+
+    return [Games, jDict, roomTag]
+
+    
+
+
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -22,7 +40,7 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, studentID=form.studentID.data)
+        new_user = User(username=form.username.data, studentID=form.studentID.data, test=form.course.data)
         db.session.add(new_user)
         db.session.commit()
         user = User.query.filter_by(username=form.username.data).first()
@@ -60,7 +78,8 @@ def home():
     return render_template("home.html")
 
 @app.route('/waiting', methods=['POST'])
-def waiting():  
+def waiting(): 
+    Games = set_environment()[0] 
 
     count = Games.query.filter_by(gameSet=0).count()
     print ('Waiting', count)
@@ -76,11 +95,12 @@ def waiting():
 
 @app.route("/fight", methods=['GET', 'POST'])
 def fight():
-
+     
     if not current_user.is_authenticated:
         flash('Please login', 'danger')
         return redirect(url_for('home'))
-
+        
+        
     unknown = 'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/waiting.png'
     
 
@@ -91,14 +111,17 @@ def fight():
       
     return render_template('fight.html', title='Fight', users=users, username=current_user.username)
 
+
 @app.route("/fightscores/<string:game>", methods=['GET', 'POST'])
 def fight_scores(game):
+    Games = set_environment()[0] 
+    gameID = game.split('_')[0]
 
     if not current_user.is_authenticated:
         flash('Please login', 'danger')
         return redirect(url_for('home'))
 
-    data = Games.query.filter_by(id=game).first()
+    data = Games.query.filter_by(id=gameID).first()
     game_results = ast.literal_eval(data.results)
     game_qs = ast.literal_eval(data.records)   
     
@@ -166,7 +189,9 @@ def fight_scores(game):
 
 
 def add_questions (q):
-    with open('ICCQs.json', "r") as f:
+    jDict = set_environment()[1] 
+        
+    with open(jDict, "r") as f:
         jload = json.load(f)
 
     # make a list of number as long as the json dictionary
@@ -208,7 +233,21 @@ def add_questions (q):
 
     return qString
 
-def set_game():
+def set_game(bot):
+    Games = set_environment()[0] 
+    roomTag = set_environment()[2] 
+
+    number_of_qs = 6
+    gameSet = None 
+
+    if bot == None:
+        player = current_user.username
+    else:
+        player = 'Bot'
+        gameSet = 1
+        room = bot
+        gameID = int(room.split('_')[0])
+    
     avatars = [
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_01.PNG',
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_02.PNG', 
@@ -220,27 +259,24 @@ def set_game():
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_08.PNG', 
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_09.PNG',
         'https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/robot_10.PNG' 
-    ]
-    
-    number_of_qs = 6
-    gameSet = None 
+    ]  
 
     game = Games.query.filter_by(gameSet=0).first()
     if game:
         print ('FOUND GAME ', game)
         game.gameSet = 1
+        room = str(game.id) + roomTag 
         gameID = game.id
         gameSet = 1  # this means we are joining an existing game
         db.session.commit()         
           
     # no game ready to join, so make new game
     if gameSet == None: 
-
         random.shuffle(avatars)
 
         # player dict
         pDict = {
-            'p1' : current_user.username, 
+            'p1' : player, 
             'p2' : 'Waiting', 
             'sid1' : request.sid, 
             'sid2' : None, 
@@ -255,37 +291,59 @@ def set_game():
         db.session.commit()
         print (newGame.id)
         player = 'p1'
-        game = newGame.id
+        room = str(newGame.id) + roomTag
 
     # game is available to join
-    elif gameSet == 1: 
-        challenge = Games.query.filter_by(id=gameID).first()
-        pDict = ast.literal_eval(challenge.players)
-        qDict = ast.literal_eval(challenge.records)
-        pDict['p2'] = current_user.username
-        pDict['sid2'] = request.sid 
-        pDict['gameID'] = gameID
-        print (pDict) 
+    elif gameSet == 1:         
+        challenge = Games.query.filter_by(id=gameID).first()        
+        if challenge.gameSet == 1:
+            pDict = ast.literal_eval(challenge.players)
+            qDict = ast.literal_eval(challenge.records)
+            p1 = pDict['p1']
+            pDict['p2'] = player
+            if p1 == player:
+                # cannot play against yourself
+                return None
+            elif player == 'Bot':
+                pDict['avatar2'] = "https://lms-tester.s3-ap-northeast-1.amazonaws.com/avatar/bot_01.png"                
+           
+            pDict['sid2'] = request.sid 
+            pDict['gameID'] = room
+            print (pDict) 
 
-        ## create results dictionary for score tally later
-        rDict = {}        
-        for number in qDict:
-            rDict[qDict[number]['q'][0]] = { pDict['p1'] : [0,0], pDict['p2'] : [0,0] }
+            ## create results dictionary for score tally later
+            rDict = {}  
+            botPoints = [0,1,1]      
+            for number in qDict: 
+                if player == 'Bot':  
+                    botScore = random.choice(botPoints)
+                    botTime = random.randint(20,70)
+                else:
+                    # no bot so....
+                    botScore = 0
+                    botTime = 0                              
+                rDict[qDict[number]['q'][0]] = { pDict['p1'] : [0,0], pDict['p2'] : [botScore, botTime] }
 
-        print ('RDICT', rDict)
-        rString = json.dumps(rDict)  
-        challenge.results = rString
-        challenge.players = str(pDict)
-        challenge.gameSet = 1        
-        db.session.commit()                         
-        player = 'p2'  
-        game = gameID 
-        qString = challenge.records
+            print ('RDICT')
+            pprint(rDict)
+            rString = json.dumps(rDict)  
+            challenge.results = rString
+            challenge.players = str(pDict)
+            challenge.gameSet = 1        
+            db.session.commit()                         
+            player = 'p2'  
+            room = room
+            qString = challenge.records        
+        else:
+            # bot is too late to join 
+            print('too late to join')
+            return None
+        
 
     return {
         # this will be joining as p1 or as p2
         'player': player, 
-        'game': game, 
+        'room': room, 
         'qString': qString, 
         'pDict' : pDict, 
         'qs' : number_of_qs
@@ -302,10 +360,12 @@ def on_connect():
 def on_join(data):
     """User joins a room"""
     print('join started')
-    player_game = set_game()
+    player_game = set_game(None)
     #return {'player': player, 'game': game 'qString': qString}
+    if player_game == None:
+        return 'ERROR - No Game Set'
     print (player_game)
-    room = player_game['game']
+    room = player_game['room']
     player = player_game['player']
     qString = player_game['qString']
     pDict = player_game['pDict']
@@ -315,29 +375,52 @@ def on_join(data):
     
     emit('playerReady', {'player': player, 'room': room, 'qString': qString, 'pDict': pDict, 'qs': qs}, room=room)
 
+@socketio.on('bot')
+def bot_mode(data):
+    Games = set_environment()[0] 
+
+    room = data['room']
+    gameID = int(room.split('_')[0])
+    #using 'room' as an argument means the bot will be loaded
+    player_game = set_game(room)  
+    qs = player_game['qs'] 
+    pDict = player_game['pDict']      
+
+    game = Games.query.filter_by(id=gameID).first()
+    results = ast.literal_eval(game.results)
+    
+    botDict = {}
+    count = 1
+    for vocab in results:
+        botDict[count] = results[vocab]['Bot'][1]        
+        count += 1
+    print ('botDict ', botDict)
+
+    emit('botReady', {'pDict': pDict, 'botDict': botDict, 'qs':qs}, room=room)
+
 
 @socketio.on('choice_made')
 def choice_made(data):
-    print (data)  
+    print ('choice', data)  
 
-    room = int(data['room'])
+    room = data['room']
     username = data['username'] 
     player = data['player']  
     
     socketio.emit('turn', {'player' : player}, room=room)
 
 @socketio.on('finish')
-def finish(data):
-    print (data)  
+def finish(data): 
+    Games = set_environment()[0]    
 
-    room = int(data['room'])
+    room = data['room']
+    gameID = int(room.split('_')[0])
     username = data['username']
-    ajData = json.loads(data['ajData'])
-    
+    ajData = json.loads(data['ajData'])    
 
     print('AJDATA', ajData)
     #{'username': 'Chris', 'ajData': '{"valuable":[0,1],"present":[1,4]}', 'room': '112'}
-    game = Games.query.filter_by(id=room).first()
+    game = Games.query.filter_by(id=gameID).first()
     game_results = ast.literal_eval(game.results)
     
     for q in ajData:
@@ -351,7 +434,37 @@ def finish(data):
     print ('GAME_RESULTS', game_results)
     
     socketio.emit('end', {'username':username}, room=room)
+    leave_room(room)
+
+@socketio.on('lost_player')
+def lost(data): 
+    Games = set_environment()[0] 
+
+    room = data['room']
+    try:
+        gameID = int(room.split('_')[0])
+    except:
+        print('No Room Found')
+        return False
+    username = data['username'] 
+
+    game = Games.query.filter_by(id=gameID).first()
+    pDict = ast.literal_eval(game.players)
+    if username == pDict['p1']: 
+        game.gameSet = 3
+        game.winner = pDict['p2']
+        db.session.commit()
+    elif username == pDict['p2']:  
+        game.gameSet = 3
+        game.winner = pDict['p1']
+        db.session.commit()
+    else:
+        print('No Match Found')
+        return False 
+
+    print ('lost_player', data, room ) 
+    socketio.emit('lost', {'username':username, 'room':room}, room=room)
 
 @socketio.on('disconnect')
 def test_disconnect():
-    print('Client disconnected')
+    print('Client Disconnected')

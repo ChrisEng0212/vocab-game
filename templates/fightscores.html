@@ -5,6 +5,7 @@
 <div class="content-section" >
     <h1 style="display:inline"> Results </h1>    
 <br>
+One point for each correct answer and (+1) if your time is faster
 <br>
 <br>
 
@@ -24,8 +25,8 @@
 			{% for vocab in game_results %}
 			<tr>			
 				<td><h6 style=""> {{vocab}}</h6></td>
-				<td><h6 style=""> {{game_results[vocab][player][0]}}  {% if game_results[vocab][player][1] == 1 %}  (faster + 1) {% endif %} </h6></td>
-				<td><h6 style="">{{game_results[vocab][opponent][0]}} {% if game_results[vocab][opponent][1] == 1 %} (faster + 1) {% endif %} </h6></td>
+				<td><h6 style=""> {{game_results[vocab][player][0]}}  {% if game_results[vocab][player][1] == 1 %}  (+1) {% endif %} </h6></td>
+				<td><h6 style="">{{game_results[vocab][opponent][0]}} {% if game_results[vocab][opponent][1] == 1 %} (+1) {% endif %} </h6></td>
 							
 			</tr>
 			{% endfor %}

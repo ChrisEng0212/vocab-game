@@ -37,7 +37,21 @@
                     {% else %}
                         {{ form.studentID(class="form-control form-control-lg") }}
                     {% endif %}
-                </div>                
+                </div>  
+
+                <div class="form-group"> 
+                    {{ form.course.label (class="form-control-label")}}</br>                        
+                            {% for subfield in form.course %}
+                            <tr>
+                                <td>{{ subfield }}</td>
+                                <td>{{ subfield.label }}</td>
+                            </tr></br>
+                            {% endfor %}
+                            {% if form.course.errors %}
+                            
+                            {% endif %}                        
+                </div>              
+
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-secondary") }}

@@ -15,9 +15,27 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(25), unique=True, nullable=False)
     studentID = db.Column(db.String(), nullable=False)
     test = db.Column(db.String())
-    #studentID = db.Column(db.String())    
+    #studentID = db.Column(db.String())  
 
-class Games(db.Model):
+class GamesICC(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    players = db.Column(db.String())
+    records = db.Column(db.String())
+    results = db.Column(db.String())
+    winner = db.Column(db.String())
+    gameSet = db.Column(db.Integer())
+
+class GamesFRD(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    players = db.Column(db.String())
+    records = db.Column(db.String())
+    results = db.Column(db.String())
+    winner = db.Column(db.String())
+    gameSet = db.Column(db.Integer())
+
+class GamesWPE(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     players = db.Column(db.String())
@@ -47,5 +65,7 @@ class MyModelView(ModelView):
 admin = Admin(app)
 
 admin.add_view(MyModelView(User, db.session))
-admin.add_view(MyModelView(Games, db.session))
+admin.add_view(MyModelView(GamesFRD, db.session))
+admin.add_view(MyModelView(GamesICC, db.session))
+admin.add_view(MyModelView(GamesWPE, db.session))
 
