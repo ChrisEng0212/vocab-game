@@ -128,7 +128,12 @@ document.addEventListener('DOMContentLoaded', () =>{
     $(window).on("unload", function(e) {
         var room = document.getElementById('zone').innerHTML 
         console.log('disconnect_js ', username)
-        socket.emit('lost_player', {'username': username, 'room': room });  
+        if (document.getElementById('zone').innerHTML == 'Game Over'){
+            console.log('GAME OVER')
+        }
+        else {
+            socket.emit('lost_player', {'username': username, 'room': room });  
+        }
     });
 
     
@@ -147,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 
 
 function checkScore(game){
+    document.getElementById('zone').innerHTML = 'Game Over'
     window.open(window.location.href + 'scores/' + game)
 }
 
