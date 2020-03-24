@@ -1,34 +1,74 @@
 {
-    "1": ["Impression", "an idea, feeling, or opinion about something "], 
-    "2": ["Competitor", "someone you are in competition with"], 
-    "3": ["Punctual", "on time"], 
-    "4": ["Last Minute", "just before something happens"], 
-    "5": ["Intelligent", "smart,  clever"], 
-    "6": ["Inquire", "ask for information"], 
-    "7": ["negative", "in bad terms"], 
-    "8": ["Innovative", "doing old things in new ways"], 
-    "9": ["Priority", "make something more important"], 
-    "10": ["Evaluate", "look at and discuss"], 
-    "11": ["Flexible", "adaptable / easy to change "], 
-    "12": ["Competent", "skilled / able / good at"], 
-    "13": ["Consequences", "result, reaction"], 
-    "14": ["Interpret", "understand, make sense of"], 
-    "15": ["Straight-forward", "more direct"], 
-    "16": ["Valuable", "worth a lot"], 
-    "17": ["Depend on", "trust or rely on something"], 
-    "18": ["Specific", "exact and detailed)"], 
-    "19": ["Promote", "make something known so people will use it"], 
-    "20": ["Presentation", "a speech or talk to explain a new product, idea, or project"], 
-    "21": ["Demonstrate", "shown what something can do"], 
-    "22": ["Effective", "productive and successful"], 
-    "23": ["Take the initiative", "start things by youself"], 
-    "24": ["Constant", "doesn't stop"], 
-    "25": ["Productive", "can produce a lot"], 
-    "26": ["Clients", "regular and important customers"], 
-    "27": ["Multiple", "having several, a few or more"], 
-    "28": ["Struggle with", "have difficulty with Ving"], 
-    "29": ["Feedback", "Your comments about something"], 
-    "30": ["Public Speaking", "speaking in front of many other people"], 
-    "31": ["Independent", "by yourself, without help"],
-    "32": ["Clarity", "clear and simple"]
+    "1": [
+        "gossip",
+        "talk about other people about stuff that may or may not be true"
+    ],
+    "2": [
+        "stamped out",
+        "stopped before it gets worse"
+    ],
+    "3": [
+        "reputation",
+        "what people believe about someone\r"
+    ],
+    "4": [
+        "team morale",
+        "the feeling and confidence of a team"
+    ],
+    "5": [
+        "forbid",
+        "not allow / no permission"
+    ],
+    "6": [
+        "sue",
+        "get money from someone who has caused you damage"
+    ],
+    "7": [
+        "victim",
+        "someone who suffered something "
+    ],
+    "8": [
+        "official",
+        "approved, formal "
+    ],
+    "9": [
+        "indication",
+        "a sign of something "
+    ],
+    "10": [
+        "dedicated ",
+        "committed, will not give up or let down"
+    ],
+    "11": [
+        "overreact",
+        "get emotional, don't stay calm"
+    ],
+    "12": [
+        "get ahead of",
+        "overtake, move faster than"
+    ],
+    "13": [
+        "behind your back ",
+        "without others listening/seeing"
+    ],
+    "14": [
+        "in confidence",
+        "in secret / privately"
+    ],
+    "15": [
+        "pass it on",
+        "to give to other people"
+    ],
+    "16": [
+        "considerate",
+        "to think about others"
+    ],
+    "17": [
+        "strict / strictly",
+        "very strong rule, can't be broken"
+    ],
+    "18": [
+        "rumor has it ",
+        "the story is..."
+    ]
 }

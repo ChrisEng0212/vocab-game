@@ -14,7 +14,7 @@ class LoginForm(FlaskForm):
     studentID = StringField('Student ID', validators=[
                             DataRequired()])
     #password = PasswordField('Password', validators=[DataRequired()])
-    course = RadioField('Course', choices = [('Reading', 'Reading'), ('ICC', 'ICC'), ('Workplace', 'Workplace')], validators=[
+    course = RadioField('Course', choices = [('Reading', 'Reading'), ('Workplace', 'Workplace')], validators=[
                             DataRequired() ])
 
     submit = SubmitField('Login')

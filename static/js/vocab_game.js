@@ -9,10 +9,12 @@ document.addEventListener('DOMContentLoaded', () =>{
     console.log(socket)
 
     const username = document.querySelector('#username').innerHTML;
+    let room;
 
     socket.on('connect', function(){
         //sends to app.py as msg which it prints
         console.log('connect_js')
+        
         socket.send('User has connected')
     });
     
@@ -27,8 +29,10 @@ document.addEventListener('DOMContentLoaded', () =>{
     //data will be a json automatically
     socket.on('playerReady', function(data){        
         console.log(data)
-        let room = document.getElementById('zone') 
-        room.innerHTML = data.room 
+        let zone = document.getElementById('zone') 
+        zone.innerHTML = data.room 
+        room = data.room
+
         //from python --> emit('playerReady', {'player': player, 'room': room, 'qString': qString}, room=room)
         if (data){   
             document.getElementById('qJSON').innerHTML = data.qString
@@ -82,18 +86,18 @@ document.addEventListener('DOMContentLoaded', () =>{
 
 
     $('#clicker').on('click', function() {    
-        var room = document.getElementById('zone').innerHTML
+        //var room = document.getElementById('zone').innerHTML
         var player = document.getElementById('player').innerHTML
         socket.emit('choice_made', {'username': username, 'room':room, 'player':player});
     }) 
 
     $('#bot').on('click', function() {    
-        var room = document.getElementById('zone').innerHTML        
+        //var room = document.getElementById('zone').innerHTML        
         socket.emit('choice_made', {'username': 'Bot', 'room':room, 'player':'p2'});
     }) 
     
     $('#finish').on('click', function() {
-        var room = document.getElementById('zone').innerHTML 
+        //var room = document.getElementById('zone').innerHTML 
         var ajData = this.value       
         socket.emit('finish', {'username': username, 'ajData':ajData, 'room':room}); // def on_join --> set_game
         //close room to control lost_player alert
@@ -126,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     });
     
     $(window).on("unload", function(e) {
-        var room = document.getElementById('zone').innerHTML 
+        //var room = document.getElementById('zone').innerHTML 
         console.log('disconnect_js ', username)
         if (document.getElementById('zone').innerHTML == 'Game Over'){
             console.log('GAME OVER')
@@ -263,7 +267,6 @@ function send_result(choice, answer, question){
     } else {
          var point = 0
     }
-
     
     console.log('CHECK', question, choice, answer, time, point) 
     

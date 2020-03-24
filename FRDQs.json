@@ -1,32 +1,62 @@
-{   
-    "1": ["Emotion", "Feeling / way of thinking"], 
-    "2": ["Maintain", "Keep in order, don't let it get out of control"], 
-    "3": ["Mood", "Feeling"], 
-    "4": ["Network", "A connected group"], 
-    "5": ["Rewarding", "feels good to achieve"], 
-    "6": ["Contribute", "add to"], 
-    "7": ["Avoid", "stop / stay away from"], 
-    "8": ["Alternative", "Another choice"], 
-    "9": ["Personal", "Anything about you"], 
-    "10": ["Possessions", "things you own, belongings"], 
-    "11": ["Budget", "deciding how much to spend on things"], 
-    "12": ["Purchase", "something you buy"], 
-    "13": ["Appliance", "A machine that does work at home."], 
-    "14": ["Affordable", "cheap / inexpensive"], 
-    "15": ["Cost-efficient ", "cost is down - effect is up "], 
-    "16": ["Intelligence", "Having knowledge and skills"], 
-    "17": ["Combine", "Mix things together, combination "], 
-    "18": ["Creative", "using imagination to create new things"], 
-    "19": ["Strategy", "A plan to achieve a goal"], 
-    "20": ["Educate", "teach, train, instruct - help someone learn"], 
-    "21": ["Curious", "want to know more"], 
-    "22": ["Aware", "know something"], 
-    "23": ["Genre", "A kind of book, movies, or video game"], 
-    "24": ["Key", "something important for something else"],      
-    "25": ["Destination", "where you are going to"], 
-    "26": ["Target", "someone who criminals will see"],
-    "27": ["Shoulder season", "a nice and cheap time to travel"], 
-    "28": ["Essential", "important"], 
-    "29": ["Accommodation", "places you can stay"], 
-    "30": ["Splurge", "spending money freely"] 
+{
+    "1": [
+        "bond",
+        "special connection / made stronger"
+    ],
+    "2": [
+        "suffer from ",
+        "experience something bad"
+    ],
+    "3": [
+        "endangered species",
+        "animals in danger "
+    ],
+    "4": [
+        "expenses",
+        "a financial cost"
+    ],
+    "5": [
+        "artificial",
+        "man-made, not natural"
+    ],
+    "6": [
+        "reunite",
+        "come together again"
+    ],
+    "7": [
+        "for a living",
+        "to make money for living"
+    ],
+    "8": [
+        "world-class",
+        "considered good on a global-scale"
+    ],
+    "9": [
+        "average ",
+        "normal / standard / same as most"
+    ],
+    "10": [
+        "long-distance",
+        "very-far"
+    ],
+    "11": [
+        "course",
+        "a way to follow / a track"
+    ],
+    "12": [
+        "calories",
+        "energy in food"
+    ],
+    "13": [
+        "risk",
+        "take a chance / something bad could happen"
+    ],
+    "14": [
+        "massive / enormous",
+        "huge / big / giant"
+    ],
+    "15": [
+        "climate",
+        "the weather over a long period of time"
+    ]
 }
