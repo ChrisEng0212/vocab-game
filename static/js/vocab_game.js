@@ -1,26 +1,25 @@
 document.addEventListener('DOMContentLoaded', () =>{
     
     var link = location.protocol + '//' + document.domain + ':' + location.port
-    console.log(link)
+    //console.log(link)
     
     var socket = io.connect(link);
     //var socket = io.connect('http://' + document.domain + ':' + location.port, {transports: ['websocket']});
 
-    console.log(socket)
+    
 
     const username = document.querySelector('#username').innerHTML;
     let room;
 
     socket.on('connect', function(){
         //sends to app.py as msg which it prints
-        console.log('connect_js')
+        //console.log('connect_js')
         
         socket.send('User has connected')
     });
     
     
-    $('#readyButton').on('click', function() {
-        console.log('readyButton Activated')
+    $('#readyButton').on('click', function() {        
         document.querySelector('#readyButton').style="visibility:hidden"           
         socket.emit('join', {'username': username}); // def on_join --> set_game
     })  
@@ -28,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () =>{
       
     //data will be a json automatically
     socket.on('playerReady', function(data){        
-        console.log(data)
+        
         let zone = document.getElementById('zone') 
         zone.innerHTML = data.room 
         room = data.room
@@ -105,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     })  
 
     socket.on('turn', function(data){        
-        console.log('turn', data)        
+        //console.log('turn', data)        
         if (data.player == 'p1'){
             document.querySelector('#ready1').style="background:darkturquoise"                        
         }
@@ -116,13 +115,13 @@ document.addEventListener('DOMContentLoaded', () =>{
     });
     
     socket.on('end', function(data){        
-        console.log('end', data)     
+        console.log('end')     
     });
 
     
 
     socket.on('botReady', function(data){            
-        console.log('bot', data)   
+        console.log('bot')   
         document.getElementById('img2').src = data.pDict['avatar2']
         document.querySelector('#name2').innerHTML = data.pDict['p2']
         bot = 100
@@ -131,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () =>{
     
     $(window).on("unload", function(e) {
         //var room = document.getElementById('zone').innerHTML 
-        console.log('disconnect_js ', username)
+        console.log('disconnect_js ')
         if (document.getElementById('zone').innerHTML == 'Game Over'){
             console.log('GAME OVER')
         }
@@ -144,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () =>{
 
     socket.on('lost', function(data){ 
         var clients = io.sockets.clients(data.room)       
-        console.log('lost', data, clients)          
+        //console.log('lost', data, clients)          
         alert('On no, it looks like ' + data.username + ' has left the game. Please continue and you will be the winner.')  
     });
     
@@ -173,10 +172,10 @@ function create_inputs(q){
     }
 
     var obj = JSON.parse(document.getElementById('qJSON').innerHTML) 
-    console.log(obj)
-    console.log(q)   
+    //console.log(obj)
+    //console.log(q)   
     qNum = Object.keys(obj).length
-    console.log(qNum)
+    //console.log(qNum)
     
     //add div for question and inputs to be created    
     var parent = document.createElement("div")
@@ -208,8 +207,7 @@ function create_inputs(q){
 
     for (i = 0; i < 3 ; i++) {   
 
-        let choice = obj[q]['a'][i]
-        console.log(choice)
+        let choice = obj[q]['a'][i]        
 
         var input = document.createElement("input");
         input.setAttribute('type', 'radio');
@@ -238,7 +236,7 @@ function remove_inputs(){
     var container = document.getElementById("qBox")
 
     var element = document.getElementById('parent');
-    console.log(element)
+    
     if (element){        
         var question = element.firstElementChild.textContent
         container.removeChild(element);
@@ -268,10 +266,10 @@ function send_result(choice, answer, question){
          var point = 0
     }
     
-    console.log('CHECK', question, choice, answer, time, point) 
+    //console.log('CHECK', question, choice, answer, time, point) 
     
     ajData[question] = [point, time]
-    console.log(ajData)
+    
 
     var results = document.createElement("div")
     results.setAttribute('id', 'results')
@@ -298,13 +296,13 @@ function send_result(choice, answer, question){
     }
 
 function Timer(n, qs, bot) { 
-    console.log(n, qs, bot)
+    //console.log(n, qs, bot)
     if (n == qs + 1){
         create_inputs(n)
     }
     else{ 
         if (n == 1){
-            timer.innerHTML = '5'
+            timer.innerHTML = '3'
         }
         else {
             timer.innerHTML = '3'
