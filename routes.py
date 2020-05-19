@@ -47,6 +47,7 @@ def login():
         if user:
             login_user(user)
             user.username = form.username.data
+            user.test = form.vocab.data
             db.session.commit()
         else:
             new_user = User(username=form.username.data, studentID=form.studentID.data, test=form.vocab.data)
