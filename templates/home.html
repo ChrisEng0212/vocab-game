@@ -3,16 +3,29 @@
 {% block content %}
 
 <div class="content-section">
-    <h1> Game Zone Arena </h1>
+    <h1> Vocab Game Zone </h1>
 
     <br>
     {% if current_user.username %}
-    <h3> Welcome {{current_user.username}}. Good Luck in the arena today!</h3>
+    <h3> Welcome {{current_user.username}}. Good luck in the Game Zone today!</h3>
+    <br>
+    <a href="{{url_for('fight')}}"><img src="static\json_files\battle.png"></a>
+    <br>
+    <br>
+    
+    <h2> Victories: {{victories}} </h2>
+
+
+
+
+
+
     {% else %}
-    <h3> Welcome to the Game Zone. Please <a href="{{url_for('login')}}">Log In</a> </h3>
+    <h3> Welcome challenger! Please <a href="{{url_for('login')}}">Log In</a> </h3>
     {% endif %}
     <br>
-    <button class"btn btn-info" style="background:salmon"><h3> <a href="{{url_for('fight')}}">Challenge</a> </h3></button>
+    
+    
 
 </div>
 

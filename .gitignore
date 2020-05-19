@@ -3,16 +3,7 @@ static/.DS_Store
 static/jsonFiles
 
 config.py
+defChecker.py
 
-setup.txt
-todo.txt
-aws.py
-spreadsheet.py
-vocabData.py
-partNames.py
-courseData.py
-gradeData.py
-.env
-venv
 
 __pycache__

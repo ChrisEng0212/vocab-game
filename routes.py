@@ -1,7 +1,5 @@
 import sys, boto3, random
 import random
-#from random import shuffle
-#from random import randint
 from datetime import datetime, timedelta
 import ast
 import json
@@ -14,21 +12,26 @@ from models import *
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 
-
-
 def set_environment():
     if current_user.is_authenticated:
         course = User.query.filter_by(username=current_user.username).first().test
+        
         courseDict ={
-            'Reading': [GamesFRD, 'FRDQs.json', '_FRD'],
-            'ICC': [GamesICC, 'ICCQs.json', '_ICC'],
-            'Workplace': [GamesWPE, 'WPEQs.json', '_WPE']
+            'FRD_2_2': [GamesFRD, 'static\json_files\FRD_defs_02-2.json', '_FRD'],
+            'WPE_2_2': [GamesWPE, 'static\json_files\WPE_defs_02-2.json', '_WPE'],
+            'FRD_2_1': [GamesFRD, 'static\json_files\FRD_defs_02-1.json', '_FRD'],
+            'WPE_2_1': [GamesWPE, 'static\json_files\WPE_defs_02-1.json', '_WPE'],           
+            'FRD_1_1': [GamesFRD, 'static\json_files\FRD_defs_01-1.json', '_FRD'],
+            'WPE_1_1': [GamesWPE, 'static\json_files\WPE_defs_01-1.json', '_WPE'],           
+            'FRD_1_2': [GamesFRD, 'static\json_files\FRD_defs_01-2.json', '_FRD'],
+            'WPE_1_2': [GamesWPE, 'static\json_files\WPE_defs_01-2.json', '_WPE'],           
         }
         Games = courseDict[course][0]
         jDict = courseDict[course][1]
         roomTag = courseDict[course][2]
+        victories = courseDict[course][0].query.filter_by(winner=current_user.studentID).count()
 
-    return [Games, jDict, roomTag]
+    return [Games, jDict, roomTag, victories]
 
     
 
@@ -40,26 +43,19 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, studentID=form.studentID.data, test=form.course.data)
-        db.session.add(new_user)
-        db.session.commit()
-        user = User.query.filter_by(username=form.username.data).first()
-        login_user(user)
-        flash(f'Logged In', 'secondary')
-        return redirect(url_for('home'))
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
+        user = User.query.filter_by(studentID=form.studentID.data).first()
+        if user:
             login_user(user)
-            flash(
-                f'Login Successful. Welcome back {current_user.username}.', 'success')
-            return redirect(url_for('home'))
-        elif True:
-            login_user(user)
-            flash(
-                f'Login Successful. Welcome back {current_user.username}.', 'success')
+            user.username = form.username.data
+            db.session.commit()
         else:
-            flash(
-                f'Login Unsuccessful. Please check your password.', 'danger')
-            return redirect(url_for('login', stid=current_user.username))
+            new_user = User(username=form.username.data, studentID=form.studentID.data, test=form.vocab.data)
+            db.session.add(new_user)
+            db.session.commit()
+            user = User.query.filter_by(username=form.username.data).first()
+            login_user(user)        
+        flash(f'Logged In', 'secondary')
+        return redirect(url_for('home'))        
     
     return render_template('login.html', title='Login', form=form)
 
@@ -75,7 +71,13 @@ def logout():
 @app.route("/home", methods=['GET', 'POST'])
 def home():  
 
-    return render_template("home.html")
+    if current_user.is_authenticated: 
+        v = set_environment()[3]
+    else:
+        v = None
+
+
+    return render_template("home.html", victories = v)
 
 @app.route('/waiting', methods=['POST'])
 def waiting(): 
@@ -172,20 +174,30 @@ def fight_scores(game):
     game_results['SCORE'] = scores
 
     if scores[player] > scores[opponent]:
-        winner = player
+        user = User.query.filter_by(username=player).first()
+        if user:
+            winner = player
+            winnerID = user.studentID
+        else: 
+            winner = player
+            winnerID = player
     elif scores[opponent] > scores[player]:
-        winner = opponent
+        user = User.query.filter_by(username=opponent).first()
+        if user:
+            winner = opponent
+            winnerID = user.studentID
+        else: 
+            winner = opponent        
+            winnerID = opponent        
     else:
         winner = 'EVENS'
+        winnerID = 'EVENS'
 
     # add winner to games data base
-    data.winner = winner
+    data.winner = winnerID
     db.session.commit()   
 
     return render_template('fightscores.html', title='Scores', player=player, opponent=opponent, game_results=game_results, winner=winner)
-
-
-
 
 
 def add_questions (q):
@@ -360,8 +372,7 @@ def on_connect():
 def on_join(data):
     """User joins a room"""
     print('join started')
-    player_game = set_game(None)
-    #return {'player': player, 'game': game 'qString': qString}
+    player_game = set_game(None)    
     if player_game == None:
         return 'ERROR - No Game Set'
     print (player_game)
@@ -418,8 +429,7 @@ def finish(data):
     username = data['username']
     ajData = json.loads(data['ajData'])    
 
-    print('AJDATA', ajData)
-    #{'username': 'Chris', 'ajData': '{"valuable":[0,1],"present":[1,4]}', 'room': '112'}
+    print('AJDATA', ajData)    
     game = Games.query.filter_by(id=gameID).first()
     game_results = ast.literal_eval(game.results)
     

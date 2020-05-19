@@ -52,9 +52,9 @@
       </div>
     </header>
 
-    {% set colors = { 'ICC':'steelblue', 'Reading':'mediumaquamarine', 'Workplace':'NAVAJOWHITE' } %}
+    {% set colors = { 'I':'steelblue', 'F':'mediumaquamarine', 'W':'NAVAJOWHITE' } %}
     {% if current_user.test %}
-    <body style="background:{{colors[current_user.test]}}" class="notranslate">
+    <body style="background:{{colors[current_user.test[0]]}}" class="notranslate">
     {% else %}    
     <body style="background:gray" class="notranslate">
     {% endif %}

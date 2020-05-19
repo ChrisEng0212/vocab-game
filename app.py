@@ -10,14 +10,12 @@ try:
     from config import BaseConfig
     DEBUG = BaseConfig.DEBUG
     SECRET_KEY = BaseConfig.SECRET_KEY
-    SQLALCHEMY_DATABASE_URI = BaseConfig.SQLALCHEMY_DATABASE_URI 
-    LOCAL = True   
+    SQLALCHEMY_DATABASE_URI = BaseConfig.SQLALCHEMY_DATABASE_URI     
 except:
     DEBUG = os.environ['DEBUG']
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-    LOCAL = False
-
+    
 
 app = Flask(__name__)
 app.config['DEBUG'] = DEBUG
@@ -43,10 +41,10 @@ from routes import *
 
 
 if __name__ == '__main__':
-    if LOCAL == True:
+    if DEBUG == True:
         print('LOCAL')          
         socketio.run(app)
-    elif LOCAL == False:     
+    else:     
         print ('DEBUG ON')   
         app.run(debug=True)
     

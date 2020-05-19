@@ -24,6 +24,7 @@
                 </div>
 
                 <h5> Use your student ID to get bonus points if you win</h5>
+                <h5 style="color:hotpink"> If you are not student in these courses use any random 4-digit number to try the app</h5>
 
                 <div class="form-group">
                     {{ form.studentID.label(class="form-control-label") }}
@@ -40,14 +41,14 @@
                 </div>  
 
                 <div class="form-group"> 
-                    {{ form.course.label (class="form-control-label")}}</br>                        
-                            {% for subfield in form.course %}
+                    {{ form.vocab.label (class="form-control-label")}}</br>                        
+                            {% for subfield in form.vocab %}
                             <tr>
                                 <td>{{ subfield }}</td>
                                 <td>{{ subfield.label }}</td>
                             </tr></br>
                             {% endfor %}
-                            {% if form.course.errors %}
+                            {% if form.vocab.errors %}
                             
                             {% endif %}                        
                 </div>              
