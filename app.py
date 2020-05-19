@@ -2,9 +2,7 @@ from flask import Flask, render_template   #app = Flask(__name__)
 from flask_sqlalchemy import SQLAlchemy  #needed for app initialization (see below - db)
 from flask_bcrypt import Bcrypt  #needed for password storage
 from flask_login import LoginManager, current_user #needed for login
-from flask_socketio import SocketIO
-
-##https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent/page/12
+from flask_socketio import SocketIO #https://blog.miguelgrinberg.com/post/easy-websockets-with-flask-and-gevent/page/12
 import os
 try:
     from config import BaseConfig
