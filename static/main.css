@@ -1,6 +1,4 @@
 
-
-
 .card {
   background: white;  
   border: none;
@@ -82,7 +80,7 @@ body {
 
   .content-section {
     background: #ffffff;
-    padding: 10px 20px;
+    padding: 5px 5px;
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
@@ -165,15 +163,6 @@ body {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-
-
-
-.btn-audio {
-  width: 100px;  
-}
-
-
-
 
 
 table {
