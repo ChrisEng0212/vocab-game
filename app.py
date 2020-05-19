@@ -41,11 +41,6 @@ from routes import *
 
 
 if __name__ == '__main__':
-    if DEBUG == True:
-        print('LOCAL')          
-        socketio.run(app)
-    else:     
-        print ('DEBUG ON')   
-        app.run(debug=True)
+    socketio.run(app)
     
     
