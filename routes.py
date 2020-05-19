@@ -3,6 +3,7 @@ import random
 from datetime import datetime, timedelta
 import ast
 import json
+import os
 from flask import render_template, url_for, flash, redirect, request, abort, jsonify  
 from app import app, db, bcrypt, socketio, login
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -11,20 +12,23 @@ from pprint import pprint
 from models import *
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
+def json_path(file):
+    SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+    json_path = os.path.join(SITE_ROOT, "static/json_files", file)    
+    return json_path
 
 def set_environment():
     if current_user.is_authenticated:
-        course = User.query.filter_by(username=current_user.username).first().test
-        
+        course = User.query.filter_by(username=current_user.username).first().test        
         courseDict ={
-            'FRD_2_2': [GamesFRD, 'static\json_files\FRD_defs_02-2.json', '_FRD'],
-            'WPE_2_2': [GamesWPE, 'static\json_files\WPE_defs_02-2.json', '_WPE'],
-            'FRD_2_1': [GamesFRD, 'static\json_files\FRD_defs_02-1.json', '_FRD'],
-            'WPE_2_1': [GamesWPE, 'static\json_files\WPE_defs_02-1.json', '_WPE'],           
-            'FRD_1_1': [GamesFRD, 'static\json_files\FRD_defs_01-1.json', '_FRD'],
-            'WPE_1_1': [GamesWPE, 'static\json_files\WPE_defs_01-1.json', '_WPE'],           
-            'FRD_1_2': [GamesFRD, 'static\json_files\FRD_defs_01-2.json', '_FRD'],
-            'WPE_1_2': [GamesWPE, 'static\json_files\WPE_defs_01-2.json', '_WPE'],           
+            'FRD_2_2': [GamesFRD, 'FRD_defs_02-2.json', '_FRD'],
+            'WPE_2_2': [GamesWPE, 'WPE_defs_02-2.json', '_WPE'],
+            'FRD_2_1': [GamesFRD, 'FRD_defs_02-1.json', '_FRD'],
+            'WPE_2_1': [GamesWPE, 'WPE_defs_02-1.json', '_WPE'],           
+            'FRD_1_1': [GamesFRD, 'FRD_defs_01-1.json', '_FRD'],
+            'WPE_1_1': [GamesWPE, 'WPE_defs_01-1.json', '_WPE'],           
+            'FRD_1_2': [GamesFRD, 'FRD_defs_01-2.json', '_FRD'],
+            'WPE_1_2': [GamesWPE, 'WPE_defs_01-2.json', '_WPE'],           
         }
         Games = courseDict[course][0]
         jDict = courseDict[course][1]
@@ -201,9 +205,8 @@ def fight_scores(game):
     return render_template('fightscores.html', title='Scores', player=player, opponent=opponent, game_results=game_results, winner=winner)
 
 
-def add_questions (q):
-    jDict = set_environment()[1] 
-        
+def add_questions (q):    
+    jDict = json_path(set_environment()[1])  
     with open(jDict, "r") as f:
         jload = json.load(f)
 
