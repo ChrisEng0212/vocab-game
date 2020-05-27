@@ -53,8 +53,8 @@ class GamesWPE(db.Model):
 class MyModelView(ModelView):
     def is_accessible(self):
         if DEBUG == True:
-            return True
-        elif current_user.is_authenticated and current_user.id == 1:
+            return True 
+        elif current_user.is_authenticated and current_user.studentID == '100000000':
             return True
 
 admin = Admin(app)
